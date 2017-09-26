@@ -1,4 +1,3 @@
-import QueryBarStore from './store';
+import { QueryBarStore, QUERY_PROPERTIES } from './query-bar-store';
 
-export default QueryBarStore;
-export { QueryBarStore };
+export { QueryBarStore, QUERY_PROPERTIES };
