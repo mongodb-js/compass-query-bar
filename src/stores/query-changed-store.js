@@ -3,7 +3,10 @@ import StateMixin from 'reflux-state-mixin';
 import app from 'hadron-app';
 import { pick, isEqual, cloneDeep } from 'lodash';
 
-import { QueryBarStore, QUERY_PROPERTIES } from './query-bar-store';
+import QUERY_PROPERTIES from 'constants/query-properties';
+import QueryBarStore from './query-bar-store';
+
+const debug = require('debug')('mongodb-compass:stores:query-changed-store');
 
 const EXTENDED_QUERY_PROPERTIES = QUERY_PROPERTIES.concat([
   'maxTimeMS',
