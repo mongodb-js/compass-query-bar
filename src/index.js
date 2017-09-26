@@ -1,6 +1,6 @@
 import QueryBarPlugin from './plugin';
 import QueryBarActions from 'actions';
-import { QueryBarStore } from 'stores';
+import { QueryBarStore, QueryChangedStore } from 'stores';
 
 /**
  * A sample role for the component.
@@ -27,6 +27,7 @@ function activate(appRegistry) {
   // appRegistry.registerRole('', ROLE);
   appRegistry.registerAction('Query.Actions', QueryBarActions);
   appRegistry.registerStore('Query.Store', QueryBarStore);
+  appRegistry.registerStore('Query.ChangedStore', QueryChangedStore);
 }
 
 /**
@@ -37,6 +38,7 @@ function deactivate(appRegistry) {
   // appRegistry.deregisterRole('', ROLE);
   appRegistry.deregisterAction('Query.Actions');
   appRegistry.deregisterStore('Query.Store');
+  appRegistry.deregisterStore('Query.ChangedStore');
 }
 
 export default QueryBarPlugin;
