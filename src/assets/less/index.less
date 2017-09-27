@@ -5,4 +5,232 @@
   // Note: these styles WILL NOT be used in compass, as compass provides its own set
   // of global styles. If you are wishing to style a given component, you should be writing a less file per
   // component as per the CSS Modules ICSS spec. @see components/ToggleButton for an example.
+
+  // TODO: Temp Global - from querybar.less
+  .querybar {
+    &-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    &-input-group {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    &-option-container {
+      flex-grow: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      border: 1px solid @gray5;
+      background: @pw;
+      margin-right: 10px;
+      overflow: hidden;
+
+      & > .querybar-option:first-child {
+        border: none;
+      }
+
+      .CodeMirror-placeholder {
+        color: #999999;
+      }
+    }
+
+    &-has-focus {
+      border-color: @alertBlue;
+    }
+
+    &-option-group {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &-button-group {
+      display: flex;
+      flex-grow: 0;
+    }
+
+    &-input-container {
+      padding: 12px 0px 10px 12px;
+      background: @gray8;
+      border-bottom: 1px solid @gray7;
+      overflow-x: hidden;
+
+      .is-feature-flag .form-control {
+        border: 1px solid @chart1;
+      }
+
+      .syntax-help {
+        position: absolute;
+        top: 7px;
+        left: 5px;
+        z-index: 2;
+      }
+    }
+
+    &-reset-button {
+      margin-left: 5px;
+    }
+  }
+
+  // TODO: Temp Global - from querybar-option.less
+  .querybar-option {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 5px;
+    border-top: 1px solid @gray7;
+    overflow: scroll;
+    width: 100%;
+
+    &-has-error {
+      .querybar-option-label {
+        background: @alertRed;
+      }
+    }
+
+    &-has-toggle {
+      padding-right: 85px;
+      width: calc(~"100% - 60px")!important;
+    }
+
+    &-is-document-type {
+      flex-grow: 10;
+    }
+
+    &-is-numeric-type {
+      flex-basis: 140px;
+    }
+
+    &-is-boolean-type {
+      flex-basis: 130px;
+
+      .querybar-option-input {
+        position: relative;
+        top: -2px;
+      }
+    }
+
+    &-info-sprinkle {
+      color: @pw;
+    }
+
+    &-label {
+      background: @gray5;
+      color: @pw;
+      white-space: nowrap;
+      border-radius: 14px;
+      padding: 2px 5px;
+      margin-right: 5px;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-family: "Akzidenz", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      flex-grow: 0;
+
+      & .info-sprinkle {
+        margin-left: inherit;
+        margin-right: 3px;
+        font-size: 11px;
+        color: white;
+        top: 0px;
+
+        &:hover {
+          opacity: 1;
+          color: white;
+        }
+      }
+    }
+
+    &-label-info {
+      padding-right: 3px;
+    }
+
+    &-input {
+      flex-grow: 10;
+      width: 100%;
+      border: none;
+      font-family: @font-family-monospace;
+      font-size: 12px;
+      outline: none;
+    }
+  }
+
+  // TODO: Temp Global - sampling-message.less
+  .sampling-message {
+
+    border-bottom: 1px solid @gray7;
+    font-size: 13px;
+    font-weight: 200;
+    height: 32px;
+    padding: 5px 15px 5px 15px;
+    background: @gray8;
+
+    &-refresh-documents {
+      float: right;
+    }
+  }
+
+
+  // TODO: Temp Global - options-toggle.less
+  .querybar-options-toggle {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    padding-left: 5px;
+    cursor: pointer;
+    border-radius: 0 9px 9px 0;
+
+    &-open {
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  @import (inline) "~codemirror/lib/codemirror.css";
+  @import (inline) "~codemirror/addon/hint/show-hint.css";
+  @import (inline) "~codemirror-mongodb/theme.css";
+
+  // TODO: Temp Global - auto-complete.less
+  .CodeMirror {
+    height: auto;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+
+    &-hints {
+      margin: 2px 0 0;
+      padding: 3px;
+      font-size: 12px;
+      text-align: left;
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+      min-width: 160px;
+    }
+  }
+
+  li.CodeMirror-hint {
+    padding: 3px 8px;
+
+    &-active {
+      color: white;
+      background: linear-gradient(180deg, #2469BE 0%, #11509E 100%);
+      border-radius: 2px;
+      outline: none;
+    }
+  }
+
+  ul.CodeMirror-hints {
+    z-index: 500;
+  }
+
+  .cm-s-mongodb .CodeMirror-matchingbracket {
+      outline: 0;
+      border-bottom: 1px solid grey;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }

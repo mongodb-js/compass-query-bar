@@ -1,9 +1,9 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import QueryBar from 'components/Query Bar';
+import QueryBar from 'components/query-bar';
 import ToggleButton from 'components/toggle-button';
-import styles from './Query Bar.less';
+import styles from './query-bar.less';
 
 describe('QueryBar [Component]', () => {
   let component;
