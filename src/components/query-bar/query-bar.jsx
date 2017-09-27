@@ -300,7 +300,6 @@ class QueryBar extends Component {
     const _inputGroupClassName = classnames(
       'querybar-input-group',
       { ['has-error']: !valid },
-      { ['input-group']: featureFlag },
       { ['is-feature-flag']: featureFlag }
     );
 

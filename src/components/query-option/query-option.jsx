@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import CodeMirror from 'react-codemirror';
 import CM from 'codemirror';
-import 'codemirror-mongodb/addon/hint/mongodb-hint';
 import { InfoSprinkle } from 'hadron-react-components';
 import { shell } from 'electron';
+
+// Add the mongodb hint to codemirror
+require('codemirror-mongodb/addon/hint/mongodb-hint');
 
 const debug = require('debug')('monngodb-compass:query:component:query-option');
 
