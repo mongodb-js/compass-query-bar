@@ -19,6 +19,20 @@ const { QueryOption } = QueryOptionInjector({
   }
 });
 
+const inputTypeTests = [
+  { inputType: 'numeric', label: 'foo', expected: { inputRenderFunc: '_renderSimpleInput', type: 'input' } },
+  { inputType: 'boolean', label: 'foo', expected: { inputRenderFunc: '_renderCheckboxInput', type: 'input' } },
+
+  { inputType: 'numeric', label: 'filter', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+  { inputType: 'boolean', label: 'filter', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+
+  { inputType: 'numeric', label: 'project', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+  { inputType: 'boolean', label: 'project', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+
+  { inputType: 'numeric', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+  { inputType: 'boolean', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+];
+
 describe('OptionsToggle [Component]', function() {
   let validationFuncStub,
       onChangeStub;
@@ -94,21 +108,7 @@ describe('OptionsToggle [Component]', function() {
     });
 
     describe('when rendering the input', function() {
-      const tests = [
-        { inputType: 'numeric', label: 'foo', expected: { inputRenderFunc: '_renderSimpleInput', type: 'input' } },
-        { inputType: 'boolean', label: 'foo', expected: { inputRenderFunc: '_renderCheckboxInput', type: 'input' } },
-
-        { inputType: 'numeric', label: 'filter', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-        { inputType: 'boolean', label: 'filter', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-
-        { inputType: 'numeric', label: 'project', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-        { inputType: 'boolean', label: 'project', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-
-        { inputType: 'numeric', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-        { inputType: 'boolean', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-      ];
-
-      tests.forEach(function(test) {
+      inputTypeTests.forEach(function(test) {
         describe(`with props: { inputType: "${test.inputType}", label: "${test.label}" }`, function() {
           let inputRenderSpy,
               component;
@@ -145,13 +145,49 @@ describe('OptionsToggle [Component]', function() {
 
           it('should render the correct type of input', function() {
             expect(component.find('[data-test-id="query-bar-option-input"]')).to.be.type(test.expected.type);
-          })
+          });
         });
       });
     });
   });
 
   describe('#behaviour', function() {
+    describe('when interacting with the component', function() {
+      inputTypeTests.forEach(function(test) {
+        describe(`with props: { inputType: "${test.inputType}", label: "${test.label}" }`, function() {
+          let inputRenderSpy,
+              component;
 
+          beforeEach(function() {
+            component = shallow(
+              <QueryOption
+                label={test.label}
+                link="#"
+                inputType={test.inputType}
+                validationFunc={validationFuncStub}
+                onChange={onChangeStub}
+                placeholder="Test Placeholder"
+                value=""
+                autoPopulated={false}
+                hasToggle={false}
+                hasError={false}
+                schemaFields={{}} />
+            );
+          });
+
+          afterEach(function() {
+            component = null;
+          });
+
+          it('should call the onChange handler when the value on the input changes', function() {
+            const event = { target: { value: 'foo' } };
+            const inputNode = component.find('[data-test-id="query-bar-option-input"]');
+
+            inputNode.simulate('change', event);
+            onChangeStub.should.have.been.calledOnce;
+          });
+        });
+      });
+    });
   });
 });
