@@ -49,16 +49,22 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader'},
+          { loader: 'css-loader' }
+        ]
+      },
+      // For styles that have to be global (see https://github.com/css-modules/css-modules/pull/65)
+      {
         test: /\.less$/,
-        exclude: [/node_modules/],
+        include: [/\.global/, /bootstrap/],
         use: [
           { loader: 'style-loader' },
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              importLoaders: 1,
-              localIdentName: 'VendorDllTestAfter__[hash:base64:5]'
+              modules: false
             }
           },
           {
@@ -79,11 +85,36 @@ module.exports = {
           }
         ]
       },
+      // For CSS-Modules locally scoped styles
       {
-        test: /\.css$/,
+        test: /\.less$/,
+        exclude: [/\.global/, /bootstrap/, /node_modules/],
         use: [
-          { loader: 'style-loader'},
-          { loader: 'css-loader' }
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+              localIdentName: 'QueryBar_[name]-[local]__[hash:base64:5]'
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: function() {
+                return [
+                  project.plugin.autoprefixer
+                ];
+              }
+            }
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              noIeCompat: true
+            }
+          }
         ]
       },
       {

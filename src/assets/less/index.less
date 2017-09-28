@@ -1,10 +1,5 @@
-@import "~bootstrap/less/bootstrap.less";
-
 :global {
-  @import "~less/compass/fonts.less";
-  @import "~less/compass/palette.less";
-  @import "~less/compass/fontawesome.less";
-  @import "~less/compass/buttons.less";
+  @import "~less/compass/_theme";
 
   // Define global styles here, these will be imported by the Plugin.js.
   // Note: these styles WILL NOT be used in compass, as compass provides its own set
@@ -142,7 +137,9 @@
     }
 
     &-input-container {
-      padding: 12px 0px 10px 12px;
+      // TODO: When migrating to CSS-modules use the commented out padding below and leave this padding in place for dev mode
+      padding: 12px 10px;
+      //padding: 12px 0px 10px 12px;
       background: @gray8;
       border-bottom: 1px solid @gray7;
       overflow-x: hidden;
@@ -276,10 +273,6 @@
       border-bottom-right-radius: 0;
     }
   }
-
-  @import (inline) "~codemirror/lib/codemirror.css";
-  @import (inline) "~codemirror/addon/hint/show-hint.css";
-  @import (inline) "~codemirror-mongodb/theme.css";
 
   // TODO: Temp Global - auto-complete.less
   .CodeMirror {
