@@ -30,12 +30,12 @@ const inputTypeTests = [
   { inputType: 'boolean', label: 'project', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
 
   { inputType: 'numeric', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
-  { inputType: 'boolean', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } },
+  { inputType: 'boolean', label: 'sort', expected: { inputRenderFunc: '_renderAutoCompleteInput', type: CodeMirror } }
 ];
 
 describe('OptionsToggle [Component]', function() {
-  let validationFuncStub,
-      onChangeStub;
+  let validationFuncStub;
+  let onChangeStub;
 
   beforeEach(function() {
     validationFuncStub = sinon.stub();
@@ -67,51 +67,51 @@ describe('OptionsToggle [Component]', function() {
       expect(component.find('[data-test-id="query-bar-option"]').children()).to.have.length(2);
       expect(component.find('[data-test-id="query-bar-option"]').childAt(0)).to.have.prop('data-test-id', 'query-bar-option-label');
       expect(component.find('[data-test-id="query-bar-option"]').childAt(1)).to.have.prop('data-test-id', 'query-bar-option-input');
-    })
+    });
 
     it('should render the correct label text', function() {
-        const component = shallow(
-          <QueryOption
-            label="Test"
-            link="#"
-            inputType="numeric"
-            validationFunc={validationFuncStub}
-            onChange={onChangeStub}
-            placeholder=""
-            value=""
-            autoPopulated={false}
-            hasToggle={false}
-            hasError={false}
-            schemaFields={{}} />
-        );
+      const component = shallow(
+        <QueryOption
+          label="Test"
+          link="#"
+          inputType="numeric"
+          validationFunc={validationFuncStub}
+          onChange={onChangeStub}
+          placeholder=""
+          value=""
+          autoPopulated={false}
+          hasToggle={false}
+          hasError={false}
+          schemaFields={{}} />
+      );
 
-        expect(component.find('[data-test-id="query-bar-option-label"]')).to.have.text('<InfoSprinkle />Test');
+      expect(component.find('[data-test-id="query-bar-option-label"]')).to.have.text('<InfoSprinkle />Test');
     });
 
     it('should render an InfoSprinkle with the correct help link', function() {
-        const component = shallow(
-          <QueryOption
-            label="Test"
-            link="#"
-            inputType="numeric"
-            validationFunc={validationFuncStub}
-            onChange={onChangeStub}
-            placeholder=""
-            value=""
-            autoPopulated={false}
-            hasToggle={false}
-            hasError={false}
-            schemaFields={{}} />
-        );
+      const component = shallow(
+        <QueryOption
+          label="Test"
+          link="#"
+          inputType="numeric"
+          validationFunc={validationFuncStub}
+          onChange={onChangeStub}
+          placeholder=""
+          value=""
+          autoPopulated={false}
+          hasToggle={false}
+          hasError={false}
+          schemaFields={{}} />
+      );
 
-        expect(component.find(InfoSprinkle)).to.have.prop('helpLink', '#');
+      expect(component.find(InfoSprinkle)).to.have.prop('helpLink', '#');
     });
 
     describe('when rendering the input', function() {
       inputTypeTests.forEach(function(test) {
         describe(`with props: { inputType: "${test.inputType}", label: "${test.label}" }`, function() {
-          let inputRenderSpy,
-              component;
+          let inputRenderSpy;
+          let component;
 
           beforeEach(function() {
             inputRenderSpy = sinon.spy(QueryOption.prototype, test.expected.inputRenderFunc);
@@ -140,7 +140,7 @@ describe('OptionsToggle [Component]', function() {
           });
 
           it(`should call "${test.expected.inputRenderFunc}" to render the input element`, function() {
-              inputRenderSpy.should.have.been.calledOnce;
+            inputRenderSpy.should.have.been.calledOnce; // eslint-disable-line no-unused-expressions
           });
 
           it('should render the correct type of input', function() {
@@ -155,8 +155,7 @@ describe('OptionsToggle [Component]', function() {
     describe('when interacting with the component', function() {
       inputTypeTests.forEach(function(test) {
         describe(`with props: { inputType: "${test.inputType}", label: "${test.label}" }`, function() {
-          let inputRenderSpy,
-              component;
+          let component;
 
           beforeEach(function() {
             component = shallow(
@@ -184,7 +183,7 @@ describe('OptionsToggle [Component]', function() {
             const inputNode = component.find('[data-test-id="query-bar-option-input"]');
 
             inputNode.simulate('change', event);
-            onChangeStub.should.have.been.calledOnce;
+            onChangeStub.should.have.been.calledOnce; // eslint-disable-line no-unused-expressions
           });
         });
       });

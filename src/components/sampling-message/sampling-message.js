@@ -14,9 +14,6 @@ const HELP_URLS = Object.freeze({
   SCHEMA_SAMPLING: 'https://docs.mongodb.com/compass/current/faq/#what-is-sampling-and-why-is-it-used'
 });
 
-/**
- * Component for the sampling message.
- */
 class SamplingMessage extends Component {
   static displayName = 'SamplingMessage';
 
