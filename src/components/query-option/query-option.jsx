@@ -160,6 +160,7 @@ class QueryOption extends Component {
     return (
       <input
         id={`querybar-option-input-${label}`}
+        data-test-id="query-bar-option-input"
         className={this._getInnerClassName()}
         type="checkbox"
         checked={value}
@@ -191,6 +192,7 @@ class QueryOption extends Component {
     };
     return (
       <CodeMirror
+        data-test-id="query-bar-option-input"
         addons={[ 'display/placeholder' ]}
         className={this._getInnerClassName()}
         ref="codemirror"
@@ -205,6 +207,7 @@ class QueryOption extends Component {
     return (
       <input
         id={`querybar-option-input-${this.props.label}`}
+        data-test-id="query-bar-option-input"
         className={this._getInnerClassName()}
         type="text"
         value={this.props.value}
@@ -233,8 +236,12 @@ class QueryOption extends Component {
     );
 
     return (
-      <div className={_className}>
-        <div className="querybar-option-label">
+      <div
+        className={_className}
+        data-test-id="query-bar-option">
+        <div
+          className="querybar-option-label"
+          data-test-id="query-bar-option-label">
           <InfoSprinkle
             helpLink={link}
             onClickHandler={shell.openExternal}
