@@ -327,10 +327,9 @@ class QueryBar extends Component {
           </div>
           <div className={classnames('querybar-button-group')}>
             <button
-              id="apply_button"
+              data-test-id="query-bar-apply-filter-button"
               key="apply-button"
               className={classnames('btn', 'btn-primary', 'btn-sm', 'querybar-apply-button')}
-              data-test-id="apply-filter-button"
               type="button"
               onClick={this.onApplyButtonClicked}
               disabled={applyDisabled}
@@ -338,10 +337,9 @@ class QueryBar extends Component {
               {buttonLabel}
             </button>
             <button
-              id="reset_button"
+              data-test-id="query-bar-reset-filter-button"
               key="reset-button"
               className={classnames('btn', 'btn-default', 'btn-sm', 'querybar-reset-button')}
-              data-test-id="reset-filter-button"
               type="button"
               onClick={this.onResetButtonClicked}
               style={resetButtonStyle}
