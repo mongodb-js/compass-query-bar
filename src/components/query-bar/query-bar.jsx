@@ -303,15 +303,26 @@ class QueryBar extends Component {
       { ['is-feature-flag']: featureFlag }
     );
 
-    const resetButtonStyle = {
-      display: queryState === 'apply' ? 'inline-block' : 'none'
-    };
-
     const applyDisabled = !(valid || featureFlag);
 
     const _queryOptionClassName = classnames(
       styles['option-container'],
       { [ styles['has-focus'] ]: hasFocus }
+    );
+
+    const _applyButtonClassName = classnames(
+      'btn',
+      'btn-primary',
+      'btn-sm',
+      styles['apply-button']
+    );
+
+    const _resetButtonClassName = classnames(
+      'btn',
+      'btn-default',
+      'btn-sm',
+      styles['reset-button'],
+      { [ styles['is-visible'] ]: queryState === 'apply'}
     );
 
     return (
@@ -328,21 +339,18 @@ class QueryBar extends Component {
             <button
               data-test-id="query-bar-apply-filter-button"
               key="apply-button"
-              className={classnames('btn', 'btn-primary', 'btn-sm', styles['apply-button'])}
+              className={_applyButtonClassName}
               type="button"
               onClick={this.onApplyButtonClicked}
-              disabled={applyDisabled}
-            >
+              disabled={applyDisabled}>
               {buttonLabel}
             </button>
             <button
               data-test-id="query-bar-reset-filter-button"
               key="reset-button"
-              className={classnames('btn', 'btn-default', 'btn-sm', styles['reset-button'])}
+              className={_resetButtonClassName}
               type="button"
-              onClick={this.onResetButtonClicked}
-              style={resetButtonStyle}
-            >
+              onClick={this.onResetButtonClicked}>
               Reset
             </button>
             {this._renderShowQueryHistoryButton}
