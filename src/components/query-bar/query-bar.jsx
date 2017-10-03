@@ -14,9 +14,9 @@ import {
 
 import QueryOption from 'components/query-option';
 import OptionsToggle from 'components/options-toggle';
-
 import QUERY_PROPERTIES from 'constants/query-properties';
-// import styles from './query-bar.less';
+
+import styles from './query-bar.less';
 
 const OPTION_DEFINITION = {
   filter: {
@@ -249,7 +249,7 @@ class QueryBar extends Component {
 
     return (
       <div
-        className={classnames('querybar-option-group')}
+        className={classnames(styles['option-group'])}
         key={`option-group-${id}`}>
         {options}
       </div>
@@ -298,7 +298,7 @@ class QueryBar extends Component {
     const { hasFocus } = this.state;
 
     const _inputGroupClassName = classnames(
-      'querybar-input-group',
+      styles['input-group'],
       { ['has-error']: !valid },
       { ['is-feature-flag']: featureFlag }
     );
@@ -310,8 +310,8 @@ class QueryBar extends Component {
     const applyDisabled = !(valid || featureFlag);
 
     const _queryOptionClassName = classnames(
-      'querybar-option-container',
-      { ['querybar-has-focus']: hasFocus }
+      styles['option-container'],
+      { [ styles['has-focus'] ]: hasFocus }
     );
 
     return (
@@ -320,16 +320,15 @@ class QueryBar extends Component {
           <div
             onBlur={this._onBlur}
             onFocus={this._onFocus}
-            className={_queryOptionClassName}
-          >
+            className={_queryOptionClassName}>
             {this.renderOptionRows()}
             {this.renderToggle()}
           </div>
-          <div className={classnames('querybar-button-group')}>
+          <div className={classnames(styles['button-group'])}>
             <button
               data-test-id="query-bar-apply-filter-button"
               key="apply-button"
-              className={classnames('btn', 'btn-primary', 'btn-sm', 'querybar-apply-button')}
+              className={classnames('btn', 'btn-primary', 'btn-sm', styles['apply-button'])}
               type="button"
               onClick={this.onApplyButtonClicked}
               disabled={applyDisabled}
@@ -339,7 +338,7 @@ class QueryBar extends Component {
             <button
               data-test-id="query-bar-reset-filter-button"
               key="reset-button"
-              className={classnames('btn', 'btn-default', 'btn-sm', 'querybar-reset-button')}
+              className={classnames('btn', 'btn-default', 'btn-sm', styles['reset-button'])}
               type="button"
               onClick={this.onResetButtonClicked}
               style={resetButtonStyle}
@@ -355,8 +354,8 @@ class QueryBar extends Component {
 
   render() {
     return (
-      <div className={classnames('querybar-container')}>
-        <div className={classnames('querybar-input-container')}>
+      <div className={classnames(styles.component)}>
+        <div className={classnames(styles['input-container'])}>
           <div className={classnames('row')}>
             <div className={classnames('col-md-12')}>
               {this.renderForm()}
