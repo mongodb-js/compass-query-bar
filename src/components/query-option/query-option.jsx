@@ -151,8 +151,8 @@ class QueryOption extends Component {
 
     return classnames(
       styles.input,
-      { [ styles[`input-${label}`] ]: true },
-      { [ styles[`input-${inputType}`] ]: true },
+      { [ styles[`input-${label}`] ]: label },
+      { [ styles[`input-${inputType}`] ]: inputType },
       { [ styles['has-toggle'] ]: hasToggle }
     );
   }
