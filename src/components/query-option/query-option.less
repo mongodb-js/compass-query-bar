@@ -9,6 +9,10 @@
   overflow: scroll;
   width: 100%;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   &.has-error {
     .label {
       background: @alertRed;
@@ -109,10 +113,6 @@
     .cm-s-mongodb .CodeMirror-matchingbracket {
         outline: 0;
         border-bottom: 1px solid grey;
-    }
-
-    ::-webkit-scrollbar {
-      display: none;
     }
   }
 }
