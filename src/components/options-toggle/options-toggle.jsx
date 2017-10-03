@@ -30,8 +30,8 @@ class OptionsToggle extends PureComponent {
       'btn',
       'btn-default',
       'btn-xs',
-      styles['options-toggle'],
-      { [ styles['options-toggle-open'] ]: expanded },
+      styles.component,
+      { [ styles['is-open'] ]: expanded },
       className
     );
 
