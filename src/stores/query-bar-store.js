@@ -12,6 +12,7 @@ import {
   pick,
   keys,
   isBoolean,
+  isFunction,
   isUndefined,
   isNull,
   isEqual,
@@ -69,7 +70,11 @@ const QueryBarStore = Reflux.createStore({
 
   onActivated(appRegistry) {
     this.QueryHistoryActions = appRegistry.getAction('QueryHistory.Actions');
-    this.QueryHistoryActions.runQuery.listen(this.autoPopulateQuery.bind(this));
+
+    if (isFunction(this.QueryHistoryActions)) {
+      this.QueryHistoryActions.runQuery.listen(this.autoPopulateQuery.bind(this));
+    }
+
     appRegistry.on('collection-changed', this.onCollectionChanged.bind(this));
     appRegistry.on('database-changed', this.onDatabaseChanged.bind(this));
   },
