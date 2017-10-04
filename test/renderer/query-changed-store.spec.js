@@ -48,7 +48,7 @@ describe('QueryChangedStore [Store]', function() {
 
   it('triggers when the QueryBarStore sample variable changes', (done) => {
     expect(QueryBarStore.state.sample).to.be.false;
-    
+
     unsubscribe = QueryChangedStore.listen((state) => {
       expect(state.sample).to.be.true;
       done();
@@ -77,7 +77,7 @@ describe('QueryChangedStore [Store]', function() {
   it('does not trigger when the QueryBarStore lastExecutedQuery variable remains the same', (done) => {
     const spy = sinon.spy();
     unsubscribe = QueryChangedStore.listen(spy);
-    
+
     QueryBarStore.setQuery({filter: {foo: 1}});
     QueryBarStore.apply();
     QueryBarStore.apply();
