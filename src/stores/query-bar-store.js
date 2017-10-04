@@ -294,6 +294,9 @@ const QueryBarStore = Reflux.createStore({
       return this._validateInput(label, val) !== false;
     });
 
+    // console.log(inputStrings);
+    // console.log(inputValids);
+
     // store all keys for which the values are true
     const validKeys = keys(pick(inputValids, identity));
 

@@ -1,12 +1,16 @@
+/**
+ * QueryBarStore tests have to be run as an electron renderer test due to depending on mongodb-query-parser which
+ * requires an iframe context in order to correctly parse the query provided. The tests will fail when attempting
+ * to run as just a unit test.
+ **/
+
 /* eslint-disable no-unused-expressions */
+
 import assert from 'assert';
 import { QueryBarStore } from 'stores';
 import AppRegistry from 'hadron-app-registry';
 
 import {
-  // USER_TYPING_DEBOUNCE_MS,
-  // FEATURE_FLAG_REGEX,
-  // APPLY_STATE,
   DEFAULT_FILTER,
   DEFAULT_PROJECT,
   DEFAULT_SORT,
@@ -14,7 +18,6 @@ import {
   DEFAULT_LIMIT,
   DEFAULT_SAMPLE,
   DEFAULT_MAX_TIME_MS,
-  // DEFAULT_SAMPLE_SIZE,
   DEFAULT_STATE
 } from 'constants/query-bar-store';
 
@@ -160,7 +163,7 @@ describe('QueryBarStore [Store]', function() {
     });
   });
 
-  describe.skip('_cloneQuery', function() {
+  describe('_cloneQuery', function() {
     afterEach(function() {
       unsubscribe();
     });
@@ -210,7 +213,7 @@ describe('QueryBarStore [Store]', function() {
     });
   });
 
-  describe.skip('setQuery', function() {
+  describe('setQuery', function() {
     afterEach(function() {
       unsubscribe();
     });
@@ -402,7 +405,7 @@ describe('QueryBarStore [Store]', function() {
     });
   });
 
-  describe.skip('apply', function() {
+  describe('apply', function() {
     describe('with a valid query', function() {
       afterEach(function() {
         unsubscribe();
@@ -439,7 +442,7 @@ describe('QueryBarStore [Store]', function() {
     });
   });
 
-  describe.skip('reset', function() {
+  describe('reset', function() {
     afterEach(function() {
       unsubscribe();
     });
@@ -535,7 +538,7 @@ describe('QueryBarStore [Store]', function() {
     });
 
     describe('when setting a valid input', function() {
-      describe.skip('filter', function() {
+      describe('filter', function() {
         it('sets the filterString, filterValid and filter', function(done) {
           expect(QueryBarStore.state.filterString).to.be.equal('');
 
@@ -550,7 +553,7 @@ describe('QueryBarStore [Store]', function() {
         });
       });
 
-      describe.skip('project', function() {
+      describe('project', function() {
         it('sets the projectString, projectValid and project', function(done) {
           expect(QueryBarStore.state.projectString).to.be.equal('');
           unsubscribe = QueryBarStore.listen(state => {
@@ -563,7 +566,7 @@ describe('QueryBarStore [Store]', function() {
         });
       });
 
-      describe.skip('sort', function() {
+      describe('sort', function() {
         it('sets the sortString, sortValid and sort', function(done) {
           expect(QueryBarStore.state.sortString).to.be.equal('');
 
