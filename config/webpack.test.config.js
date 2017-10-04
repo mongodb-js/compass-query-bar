@@ -121,6 +121,27 @@ module.exports = {
             esModules: true
           }
         }
+      },
+      //TODO: Update to use ignore-loader for test env and add ignore-loader to package.json
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        use: [{
+          loader: 'url-loader',
+          query: {
+            limit: 8192,
+            name: 'assets/images/[name]__[hash:base64:5].[ext]'
+          }
+        }]
+      },
+      {
+        test: /\.(woff|woff2|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'url-loader',
+          query: {
+            limit: 8192,
+            name: 'assets/fonts/[name]__[hash:base64:5].[ext]'
+          }
+        }]
       }
     ]
   }
