@@ -162,7 +162,7 @@ class QueryBar extends Component {
   };
 
   _onFocus = () => {
-    debug('onBlur');
+    debug('onFocus');
     this.setState({ hasFocus: true });
   };
 
@@ -217,7 +217,7 @@ class QueryBar extends Component {
     const value = OPTION_DEFINITION[option].type === 'boolean' ?
       this.props[option] : this.props[`${option}String`];
 
-    debug('rendering value for option', option, '=', value);
+    if (option === 'filter') debug('rendering value for option', option, '=', value);
 
     return (
       <QueryOption
