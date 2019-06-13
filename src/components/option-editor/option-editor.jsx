@@ -111,7 +111,7 @@ class OptionEditor extends Component {
    * @returns {Component} The component.
    */
   render() {
-    debug(`value=${this.props.value} in option-editor render`);
+    debug('value in option-editor render', this.props.value);
     console.log(`value=${this.props.value} in option-editor render`);
     return (
       <AceEditor
