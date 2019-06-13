@@ -683,6 +683,8 @@ const configureStore = (options = {}) => {
 
     storeDidUpdate(prevState) {
       debug('query store changed', diff(prevState, this.state));
+      console.log('query store changed');
+      console.log(this.state.filter);
     }
   });
 

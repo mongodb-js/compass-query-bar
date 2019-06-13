@@ -10,6 +10,8 @@ import 'mongodb-ace-theme-query';
 
 const tools = ace.acequire('ace/ext/language_tools');
 
+const debug = require('debug')('mongodb-compass:components:query-bar');
+
 /**
  * Options for the ACE editor.
  */
@@ -109,6 +111,8 @@ class OptionEditor extends Component {
    * @returns {Component} The component.
    */
   render() {
+    debug(`value=${this.props.value} in option-editor render`);
+    console.log(`value=${this.props.value} in option-editor render`);
     return (
       <AceEditor
         mode="mongodb"
