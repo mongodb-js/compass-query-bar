@@ -683,8 +683,6 @@ const configureStore = (options = {}) => {
 
     storeDidUpdate(prevState) {
       debug('query store changed', diff(prevState, this.state));
-      console.log('query store changed');
-      console.log(this.state.filter);
     }
   });
 
@@ -699,14 +697,7 @@ const configureStore = (options = {}) => {
     localAppRegistry.on('fields-changed', (fields) => {
       store.setState({ schemaFields: fields.aceFields });
     });
-    localAppRegistry.on('active-tab-changed', () => {
-      debug('active-tab-changed called');
-      console.log('active-tab-changed called');
-      options.actions.refreshEditor();
-    });
     localAppRegistry.on('subtab-changed', () => {
-      debug('subtab-changed called');
-      console.log('subtab-changed called');
       options.actions.refreshEditor();
     });
 

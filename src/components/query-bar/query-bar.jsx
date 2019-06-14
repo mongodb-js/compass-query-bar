@@ -15,7 +15,6 @@ import {
 import QueryOption from 'components/query-option';
 import OptionsToggle from 'components/options-toggle';
 import QUERY_PROPERTIES from 'constants/query-properties';
-const debug = require('debug')('mongodb-compass:components:query-bar');
 
 import styles from './query-bar.less';
 
@@ -214,8 +213,6 @@ class QueryBar extends Component {
     // `<option>String` prop.
     const value = OPTION_DEFINITION[option].type === 'boolean' ?
       this.props[option] : this.props[`${option}String`];
-
-    if (option === 'filter') debug('rendering value for option', option, '=', value);
 
     return (
       <QueryOption

@@ -10,8 +10,6 @@ import 'mongodb-ace-theme-query';
 
 const tools = ace.acequire('ace/ext/language_tools');
 
-const debug = require('debug')('mongodb-compass:components:query-bar');
-
 /**
  * Options for the ACE editor.
  */
@@ -60,19 +58,9 @@ class OptionEditor extends Component {
     this.completer = new QueryAutoCompleter(props.serverVersion, textCompleter, props.schemaFields);
     this.boundOnFieldsChanged = this.onFieldsChanged.bind(this);
     this.unsub = this.props.actions.refreshEditor.listen(() => {
-      debug('refreshEditor is called, setting value to', this.props.value);
-      console.log(`refreshEditor is called, setting value to ${this.props.value}`);
       this.editor.setValue(this.props.value);
       this.editor.clearSelection();
     });
-  }
-
-  /**
-   * Subscribe on mount.
-   */
-  componentDidMount() {
-    debug('component did mount?');
-    console.log('component did mount?');
   }
 
   /**
@@ -89,8 +77,6 @@ class OptionEditor extends Component {
    * Unsubscribe listeners.
    */
   componentWillUnmount() {
-    debug('component will unmount?');
-    console.log('component will unmount?');
     this.unsub();
   }
 
@@ -117,8 +103,6 @@ class OptionEditor extends Component {
    * @returns {Component} The component.
    */
   render() {
-    debug('value in option-editor render', this.props.value);
-    console.log(`value=${this.props.value} in option-editor render`);
     return (
       <AceEditor
         mode="mongodb"
