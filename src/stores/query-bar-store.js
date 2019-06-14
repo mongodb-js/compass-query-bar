@@ -704,6 +704,11 @@ const configureStore = (options = {}) => {
       console.log('active-tab-changed called');
       options.actions.refreshEditor();
     });
+    localAppRegistry.on('subtab-changed', () => {
+      debug('subtab-changed called');
+      console.log('subtab-changed called');
+      options.actions.refreshEditor();
+    });
 
     // Put the query changed store in the app registry
     // if it is not already there.
