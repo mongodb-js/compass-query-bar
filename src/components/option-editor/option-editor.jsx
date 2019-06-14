@@ -57,6 +57,12 @@ class OptionEditor extends Component {
     const textCompleter = tools.textCompleter;
     this.completer = new QueryAutoCompleter(props.serverVersion, textCompleter, props.schemaFields);
     this.boundOnFieldsChanged = this.onFieldsChanged.bind(this);
+  }
+
+  /**
+   * Subscribe on mount.
+   */
+  componentDidMount() {
     this.unsub = this.props.actions.refreshEditor.listen(() => {
       this.editor.setValue(this.props.value);
       this.editor.clearSelection();
