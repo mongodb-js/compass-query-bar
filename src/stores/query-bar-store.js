@@ -699,6 +699,11 @@ const configureStore = (options = {}) => {
     localAppRegistry.on('fields-changed', (fields) => {
       store.setState({ schemaFields: fields.aceFields });
     });
+    localAppRegistry.on('active-tab-changed', () => {
+      debug('active-tab-changed called');
+      console.log('active-tab-changed called');
+      options.actions.refreshEditor();
+    });
 
     // Put the query changed store in the app registry
     // if it is not already there.

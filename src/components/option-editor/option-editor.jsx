@@ -59,16 +59,20 @@ class OptionEditor extends Component {
     const textCompleter = tools.textCompleter;
     this.completer = new QueryAutoCompleter(props.serverVersion, textCompleter, props.schemaFields);
     this.boundOnFieldsChanged = this.onFieldsChanged.bind(this);
+    this.unsub = this.props.actions.refreshEditor.listen(() => {
+      debug('refreshEditor is called, setting value to', this.props.value);
+      console.log(`refreshEditor is called, setting value to ${this.props.value}`);
+      this.editor.setValue(this.props.value);
+      this.editor.clearSelection();
+    });
   }
 
   /**
    * Subscribe on mount.
    */
   componentDidMount() {
-    this.unsub = this.props.actions.refreshEditor.listen(() => {
-      this.editor.setValue(this.props.value);
-      this.editor.clearSelection();
-    });
+    debug('component did mount?');
+    console.log('component did mount?');
   }
 
   /**
@@ -85,6 +89,8 @@ class OptionEditor extends Component {
    * Unsubscribe listeners.
    */
   componentWillUnmount() {
+    debug('component will unmount?');
+    console.log('component will unmount?');
     this.unsub();
   }
 

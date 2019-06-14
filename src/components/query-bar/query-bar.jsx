@@ -162,12 +162,10 @@ class QueryBar extends Component {
   };
 
   _onFocus = () => {
-    debug('onFocus');
     this.setState({ hasFocus: true });
   };
 
   _onBlur = () => {
-    debug('onBlur');
     this.setState({ hasFocus: false });
   };
 
@@ -373,7 +371,6 @@ class QueryBar extends Component {
   }
 
   render() {
-    debug('query bar render');
     return (
       <div className={classnames(styles.component)}>
         <div className={classnames(styles['input-container'])}>
