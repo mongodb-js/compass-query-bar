@@ -2,6 +2,7 @@
 .eslintrc
 .editorconfig
 .nycrc
+.prettierrc
 .travis.yml
 config/
 electron/
@@ -13,3 +14,5 @@ test/
 .nyc_output/
 coverage/
 .github/
+lib/index.html
+lib/index.js.map

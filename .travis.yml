@@ -1,11 +1,8 @@
-sudo: required
-dist: trusty
+sudo: false
+dist: bionic
 language: node_js
 node_js:
   - 12.4.0
-env:
-  matrix:
-    - MONGODB_VERSION=stable MONGODB_TOPOLOGY=standalone
 env:
   matrix:
     - MONGODB_VERSION=stable MONGODB_TOPOLOGY=standalone
