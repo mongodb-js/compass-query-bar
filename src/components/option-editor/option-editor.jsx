@@ -19,7 +19,7 @@ const OPTIONS = {
   useSoftTabs: true,
   fontSize: 11,
   minLines: 1,
-  maxLines: 1,
+  maxLines: 10,
   highlightActiveLine: false,
   showPrintMargin: false,
   showGutter: false,
