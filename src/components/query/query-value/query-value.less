@@ -1,0 +1,100 @@
+
+.query-value {
+  display: inline-block;
+  position: relative;
+}
+
+
+.query-value-input {
+
+}
+
+.query-value-picker {
+  position: absolute;
+  z-index: 5000;
+  top: 100%;
+  background-color: white;
+
+  list-style: none;
+  padding: 0;
+
+  width: 160px;
+}
+
+.query-value-option {
+  padding: 0;
+
+  border: 1px solid black;
+  border-bottom: none;
+
+  &:not(:first-child) {
+    border-top: 1px solid gray;
+  }
+
+  &:last-child {
+    border-bottom: 1px solid black;
+  }
+
+  &:hover {
+    background-color: #eee;
+
+    .query-nested-value-options { 
+      display: block;
+    }
+  }
+  // &:active {
+  //   .query-nested-value-options { 
+  //     display: block;
+  //   }
+  // }
+
+  &:focus-within {
+    .query-nested-value-options {
+      display: block;
+    }
+  }
+}
+
+// .query-value-option
+
+.query-value-option-link {
+  text-decoration: none;
+  color: inherit;
+  // width: 100%;
+  // height: 100%;
+  display: block;
+
+  padding: 6px 10px;
+  position: relative;
+  width: 100%;
+  
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+  &:active {
+    color: inherit;
+    text-decoration: none;
+  }
+  &:focus {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.query-nested-value-options {
+  display: none;
+  position: absolute;
+  // z-index: 5000;
+  left: 100%;
+  top: 0;
+  background-color: white;
+  // margin-left: -1px;
+  // border: 1px solid black;
+
+  list-style: none;
+  padding: 0;
+
+  width: 120px;
+}

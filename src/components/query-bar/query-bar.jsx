@@ -13,9 +13,10 @@ import {
 } from 'lodash';
 import FontAwesome from 'react-fontawesome';
 
-import QueryOption from 'components/query-option';
-import OptionsToggle from 'components/options-toggle';
-import QUERY_PROPERTIES from 'constants/query-properties';
+import QueryOption from '../query-option';
+import OptionsToggle from '../options-toggle';
+import QUERY_PROPERTIES from '../../constants/query-properties';
+import Query from '../query/query';
 
 import styles from './query-bar.less';
 
@@ -253,7 +254,7 @@ class QueryBar extends Component {
 
     return (
       <div
-        className={classnames(styles['option-group'])}
+        className={styles['option-group']}
         key={`option-group-${id}`}>
         {options}
       </div>
@@ -290,6 +291,14 @@ class QueryBar extends Component {
     }
 
     return rows.slice(0, 1);
+  }
+
+  renderQuery = () => {
+    return (
+      <Query
+
+      />
+    );
   }
 
   /**
@@ -341,7 +350,9 @@ class QueryBar extends Component {
         <div
           onBlur={this._onBlur}
           onFocus={this._onFocus}
-          className={_queryOptionClassName}>
+          className={_queryOptionClassName}
+        >
+          {this.renderQuery()}
           {this.renderOptionRows()}
           {this.renderToggle()}
         </div>
@@ -392,8 +403,8 @@ class QueryBar extends Component {
 
   render() {
     return (
-      <div className={classnames(styles.component)}>
-        <div className={classnames(styles['input-container'])}>
+      <div className={styles.component}>
+        <div className={styles['input-container']}>
           {this.renderForm()}
         </div>
       </div>

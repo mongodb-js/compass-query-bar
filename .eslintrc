@@ -1,3 +1,6 @@
 {
-  "extends": ["mongodb-js/compass-plugin"]
+  "extends": ["mongodb-js/compass-plugin"],
+  "rules": {
+    "react/sort-comp": 0
+  }
 }
