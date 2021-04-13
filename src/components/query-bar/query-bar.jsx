@@ -204,6 +204,11 @@ class QueryBar extends Component {
    * @return {Component}          the option component
    */
   renderOption(option, id, hasToggle) {
+    if (option === 'filter') {
+      // Rhys hack.
+      return;
+    }
+
     const { filterValid, featureFlag, autoPopulated } = this.props;
 
     // for filter only, also validate feature flag directives
@@ -294,9 +299,25 @@ class QueryBar extends Component {
   }
 
   renderQuery = () => {
+    const option = 'filter';
+    const value = this.props[`${option}String`];
+
     return (
       <Query
-
+        // label={label}
+        // autoPopulated={autoPopulated}
+        serverVersion={this.props.serverVersion}
+        // hasToggle={hasToggle}
+        // hasError={hasError}
+        // key={`query-option-${id}`}
+        value={value}
+        actions={this.props.actions}
+        // placeholder={OPTION_DEFINITION[option].placeholder}
+        // link={OPTION_DEFINITION[option].link}
+        // inputType={OPTION_DEFINITION[option].type}
+        onChange={this.onChange.bind(this, option)}
+        onApply={this.onApplyButtonClicked}
+        schemaFields={this.props.schemaFields}
       />
     );
   }
@@ -363,7 +384,8 @@ class QueryBar extends Component {
             className={_applyButtonClassName}
             type="button"
             onClick={this.onApplyButtonClicked}
-            disabled={applyDisabled}>
+            disabled={applyDisabled}
+          >
             {buttonLabel}
           </button>
           <button
@@ -371,7 +393,8 @@ class QueryBar extends Component {
             key="reset-button"
             className={_resetButtonClassName}
             type="button"
-            onClick={this.onResetButtonClicked}>
+            onClick={this.onResetButtonClicked}
+          >
             Reset
           </button>
           <button

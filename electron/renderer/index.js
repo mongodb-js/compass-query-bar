@@ -4,8 +4,13 @@ import app from 'hadron-app';
 import AppRegistry from 'hadron-app-registry';
 import { AppContainer } from 'react-hot-loader';
 import QueryBarPlugin, { activate } from 'plugin';
-import configureStore from 'stores';
+import configureStore, { setDataProvider, setNamespace } from 'stores';
 import configureActions from 'actions';
+
+// // Data service initialization and connection.
+import Connection from 'mongodb-connection-model';
+import DataService from 'mongodb-data-service';
+
 
 // Import global less file. Note: these styles WILL NOT be used in compass, as compass provides its own set
 // of global styles. If you are wishing to style a given component, you should be writing a less file per
@@ -59,6 +64,20 @@ const render = Component => {
     document.getElementById('root')
   );
 };
+
+
+const connection = new Connection({
+  hostname: '127.0.0.1',
+  port: 27017,
+  ns: 'admin'
+});
+const dataService = new DataService(connection);
+dataService.connect((error, ds) => {
+  appRegistry.emit('data-service-connected', error, ds);
+  setDataProvider(store, error, ds);
+  setNamespace(store, 'echo.bands');
+  // setViewSource(store, 'citibike.tripsOfShortDuration', [{ $match: { gender: 1 }}]);
+});
 
 localAppRegistry.emit('fields-changed', { aceFields: [
   { name: 'harry',

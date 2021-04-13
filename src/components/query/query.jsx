@@ -1,59 +1,59 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import ace from 'brace';
-// import { QueryAutoCompleter } from 'mongodb-ace-autocompleter';
+import { EJSON } from 'bson';
 
 import styles from './query.less';
 
-// import 'brace/ext/language_tools';
-// import 'mongodb-ace-mode';
-// import 'mongodb-ace-theme-query';
-
-// const tools = ace.acequire('ace/ext/language_tools');
-
 import QueryItem from './query-item/query-item';
 
-/**
- * Options for the ACE editor.
- */
-// const OPTIONS = {
-//   enableLiveAutocompletion: true,
-//   tabSize: 2,
-//   useSoftTabs: true,
-//   fontSize: 11,
-//   minLines: 1,
-//   maxLines: 10,
-//   highlightActiveLine: false,
-//   showPrintMargin: false,
-//   showGutter: false,
-//   useWorker: false
-// };
+// Innefficient but seems to work lol
+function replaceKeyInSameSpot(objToCopy, currentIndex, newIndex, newValue) {
+  let newObject = {};
+
+  Object.entries(objToCopy).forEach(([field, value]) => {
+    if (field === currentIndex) {
+      newObject = {
+        ...newObject,
+        [newIndex]: newValue
+      };
+    } else {
+      newObject = {
+        ...newObject,
+        [field]: value
+      };
+    }
+  });
+
+  return newObject;
+}
 
 class Query extends Component {
   static displayName = 'Query';
 
-  // static propTypes = {
-  //   label: PropTypes.string.isRequired,
-  //   serverVersion: PropTypes.string.isRequired,
-  //   autoPopulated: PropTypes.bool.isRequired,
-  //   actions: PropTypes.object.isRequired,
-  //   value: PropTypes.any,
-  //   onChange: PropTypes.func,
-  //   onApply: PropTypes.func,
-  //   placeholder: PropTypes.string,
-  //   schemaFields: PropTypes.array
-  // };
+  static propTypes = {
+    // label: PropTypes.string.isRequired,
+    serverVersion: PropTypes.string.isRequired,
+    // autoPopulated: PropTypes.bool.isRequired,
+    actions: PropTypes.object.isRequired,
+    value: PropTypes.any,
+    onChange: PropTypes.func,
+    onApply: PropTypes.func,
+    placeholder: PropTypes.string,
+    schemaFields: PropTypes.array
+  };
 
-  // static defaultProps = {
-  //   label: '',
-  //   value: '',
-  //   serverVersion: '3.6.0',
-  //   autoPopulated: false,
-  //   schemaFields: []
-  // };
+  static defaultProps = {
+    label: '',
+    value: '',
+    serverVersion: '3.6.0',
+    // autoPopulated: false,
+    schemaFields: []
+  };
 
   state = {
-    queryValue: ''
+    query: {
+      'field': 'value'
+    }
   };
 
   /**
@@ -99,29 +99,154 @@ class Query extends Component {
   //   this.completer.update(fields);
   // }
 
-  /**
-   * Handle the changing of the query text.
-   *
-   * @param {String} newCode - The new query.
-   */
-  // onChangeQuery = (newCode) => {
-  //   this.props.onChange({
-  //     target: {
-  //       value: newCode
-  //     }
-  //   });
-  // };
+  onChangeQuery = (queryObj) => {
+    let newCode = '';
+    try {
+      newCode = EJSON.stringify(queryObj);
+      // newCode = JSON.stringify(queryObj);
+    } catch (e) {
+      console.log('unable to parse query as json:', e);
+    }
 
+    this.props.onChange({
+      target: {
+        value: newCode
+      }
+    });
+  };
+
+  onChangeQueryItemValue = (index, newValue) => {
+    const newQuery = {
+      ...this.state.query,
+      [index]: newValue
+    };
+    this.setState({
+      query: newQuery
+    });
+
+    this.onChangeQuery(newQuery);
+  }
+
+  renameAndUpdateQueryItem = (currentIndex, newIndex, newValue) => {
+    const newQuery = replaceKeyInSameSpot(
+      this.state.query,
+      currentIndex,
+      newIndex,
+      newValue
+    );
+
+    this.setState({
+      query: newQuery
+    });
+
+    this.onChangeQuery(newQuery);
+  }
+
+  onRenameQueryItem = (currentIndex, newIndex) => {
+    const newQuery = replaceKeyInSameSpot(
+      this.state.query,
+      currentIndex,
+      newIndex,
+      this.state.query[currentIndex]
+    );
+
+    this.setState({
+      query: newQuery
+    });
+
+    this.onChangeQuery(newQuery);
+  }
+
+  onRemoveQueryItem = (index) => {
+    const newQuery = {
+      ...this.state.query
+    };
+
+    delete newQuery[index];
+
+    this.setState({
+      query: newQuery
+    });
+
+    this.onChangeQuery(newQuery);
+  }
+
+  onAddQueryItem = () => {
+    let newFieldName = 'new field';
+    if (this.state.query[newFieldName]) {
+      let counter = 1;
+      while (!!this.state.query[`new field ${counter}`]) {
+        counter++;
+      }
+      newFieldName = `new field ${counter}`;
+    }
+
+    const newQuery = {
+      ...this.state.query,
+      [newFieldName]: 'new value'
+    };
+
+    // TODO: Check that new field doesn't exist.
+
+    this.setState({
+      query: newQuery
+    });
+
+    this.onChangeQuery(newQuery);
+  }
+  // .sort(
+  //           (fieldA, fieldB) => fieldA[0].localeCompare(fieldB[0])
+  //         )
   render() {
     // const {
-    //   queryValue
+    //   query
     // } = this.state;
+
+    const {
+      schemaFields,
+      value
+    } = this.props;
+
+    let query = {};
+    try {
+      console.log('ok');
+      query = EJSON.parse(value);
+    } catch (err) {
+      console.log('unable to parse existing query:', err);
+    }
+
+    // console.log('value', value);
+    // console.log('target val', value.target.value);
 
     return (
       <div
         className={styles.query}
       >
-        <QueryItem />
+        {Object.entries(query).map(
+          ([field, fieldValue], index) => (
+            <QueryItem
+              key={`${index}`}
+              path={field}
+              field={field}
+              value={fieldValue}
+              // queryItem={query}
+              schemaFields={schemaFields}
+              onChangeQueryItemValue={this.onChangeQueryItemValue}
+              onRemoveQueryItem={this.onRemoveQueryItem}
+              onRenameQueryItem={this.onRenameQueryItem}
+              onAddQueryItem={this.onAddQueryItem}
+              renameAndUpdateValue={this.renameAndUpdateQueryItem}
+            />
+          )
+        )}
+        <div>
+          <button
+            className={styles['query-add-another-item']}
+            onClick={this.onAddQueryItem}
+          >
+            +
+          </button>
+        </div>
       </div>
     );
   }

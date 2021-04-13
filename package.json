@@ -116,13 +116,14 @@
     "mongodb-ace-autocompleter": "^0.4.1",
     "mongodb-ace-mode": "^0.4.1",
     "mongodb-ace-theme-query": "^0.0.2",
-    "mongodb-connection-model": "^14.5.1",
-    "mongodb-data-service": "^16.5.2",
+    "mongodb-connection-model": "^19.1.1",
+    "mongodb-data-service": "^19.1.1",
     "mongodb-js-precommit": "^2.2.0",
     "mongodb-query-parser": "^2.2.0",
     "mongodb-reflux-store": "^0.0.1",
     "mongodb-schema": "^8.2.5",
     "ms": "^2.1.2",
+    "node-loader": "^0.6.0",
     "numeral": "^2.0.6",
     "nyc": "^15.0.0",
     "object-diff": "0.0.4",
@@ -156,7 +157,11 @@
     "xvfb-maybe": "^0.2.1"
   },
   "dependencies": {
+    "bson": "^4.3.0",
     "lodash": "^4.17.15",
-    "mongodb-query-util": "^0.2.1"
+    "moment": "^2.29.1",
+    "mongodb-query-util": "^0.2.1",
+    "react-autocomplete": "^1.8.1",
+    "react-datetime": "^3.0.4"
   }
 }

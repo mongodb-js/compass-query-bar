@@ -44,6 +44,8 @@ import {
 } from 'constants/query-bar-store';
 import configureQueryChangedStore from './query-changed-store';
 
+import { dataServiceConnected } from './data-service';
+
 const debug = require('debug')('mongodb-compass:stores:query-bar');
 
 const QUERY_CHANGED_STORE = 'Query.ChangedStore';
@@ -76,6 +78,13 @@ const configureStore = (options = {}) => {
      */
     onServerVersionChanged(version) {
       this.setState({ serverVersion: version });
+    },
+
+    setDataProvider(provider) {
+      console.log('setDataProvidersetDataProvider');
+      this.setState({
+        dataService: provider
+      });
     },
 
     /**
@@ -760,6 +769,18 @@ const configureStore = (options = {}) => {
   }
 
   return store;
+};
+
+// copy pasta
+/**
+ * Set the data provider.
+ *
+ * @param {Store} store - The store.
+ * @param {Error} error - The error (if any) while connecting.
+ * @param {Object} provider - The data provider.
+ */
+export const setDataProvider = (store, error, provider) => {
+  store.dispatch(dataServiceConnected(error, provider));
 };
 
 export default configureStore;

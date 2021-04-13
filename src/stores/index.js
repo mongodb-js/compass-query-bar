@@ -1,2 +1,8 @@
-import configureStore from './query-bar-store';
+import configureStore, {
+  setDataProvider
+} from './query-bar-store';
+
 export default configureStore;
+export {
+  setDataProvider
+};

@@ -1,55 +1,41 @@
-import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
 // import ace from 'brace';
 // import { QueryAutoCompleter } from 'mongodb-ace-autocompleter';
-
-import styles from './query-value.less';
 // import FontAwesome from 'react-fontawesome';
 
 // import 'brace/ext/language_tools';
 // import 'mongodb-ace-mode';
 // import 'mongodb-ace-theme-query';
 
-// const tools = ace.acequire('ace/ext/language_tools');
+import styles from './query-value.less';
+import DateValue from './date-value/date-value';
 
-/**
- * Options for the ACE editor.
- */
-// const OPTIONS = {
-//   enableLiveAutocompletion: true,
-//   tabSize: 2,
-//   useSoftTabs: true,
-//   fontSize: 11,
-//   minLines: 1,
-//   maxLines: 10,
-//   highlightActiveLine: false,
-//   showPrintMargin: false,
-//   showGutter: false,
-//   useWorker: false
+const dateRegex = new RegExp('Date\(.*\)$');
+function isDate(value) {
+  return dateRegex.test(`${value}`);
+}
+
+// const LOGICAL_QUERY_OPERATORS = {
+//   '$or': {
+//     id: '$or',
+//     title: '$or',
+//     description: 'Perform a logical OR operation on an array of two or more <expressions> and select the document(s) that satisfy at least one of the <expressions>'
+//   },
+//   '$and': {
+//     id: '$and',
+//     title: '$and',
+//     description: 'Performs a logical AND operation on an array of two or more <expressions> and select the document(s) that satisfy all of the <expressions>'
+//   },
+//   '$not': {
+//     id: '$not',
+//     title: '$not'
+//   },
+//   '$nor': {
+//     id: '$nor',
+//     title: '$nor'
+//   }
 // };
-
-// const
-
-const LOGICAL_QUERY_OPERATORS = {
-  '$or': {
-    id: '$or',
-    title: '$or',
-    description: 'Perform a logical OR operation on an array of two or more <expressions> and select the document(s) that satisfy at least one of the <expressions>'
-  },
-  '$and': {
-    id: '$and',
-    title: '$and',
-    description: 'Performs a logical AND operation on an array of two or more <expressions> and select the document(s) that satisfy all of the <expressions>'
-  },
-  '$not': {
-    id: '$not',
-    title: '$not'
-  },
-  '$nor': {
-    id: '$nor',
-    title: '$nor'
-  }
-};
 
 const COMPARISON_OPERATORS = {
   '$eq': {
@@ -60,17 +46,26 @@ const COMPARISON_OPERATORS = {
   '$gt': {
     id: '$gt',
     title: '$gt',
-    description: 'Matches values that are greater than a specified value.'
+    description: 'Matches values that are greater than a specified value.',
+    defaultValue: {
+      '$gt': 0
+    }
   },
   '$gte': {
     id: '$gte',
     title: '$gte',
-    description: 'Matches values that are greater than or equal to a specified value.'
+    description: 'Matches values that are greater than or equal to a specified value.',
+    defaultValue: {
+      '$gt': 0
+    }
   },
   '$in': {
     id: '$in',
     title: '$in',
-    description: 'Matches any of the values specified in an array.'
+    description: 'Matches any of the values specified in an array.',
+    defaultValue: {
+      '$in': [123]
+    }
   },
   '$lt': {
     id: '$lt',
@@ -108,7 +103,17 @@ const GEOSPATIAL_OPERATORS = {
   $near: {
     id: '$near',
     title: '$near',
-    description: 'Returns geospatial objects in proximity to a point. Requires a geospatial index. The 2dsphere and 2d indexes support $near.'
+    description: 'Returns geospatial objects in proximity to a point. Requires a geospatial index. The 2dsphere and 2d indexes support $near.',
+    defaultValue: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [123, 123]
+        },
+        $maxDistance: 100,
+        $minDistance: 0
+      }
+    }
   },
   $nearSphere: {
     id: '$nearSphere',
@@ -118,11 +123,11 @@ const GEOSPATIAL_OPERATORS = {
 };
 
 const valueTypeOptions = {
-  LOGICAL_QUERY_OPERATOR: {
-    id: 'LOGICAL_QUERY_OPERATOR',
-    title: 'Logical Operator',
-    options: LOGICAL_QUERY_OPERATORS
-  },
+  // LOGICAL_QUERY_OPERATOR: {
+  //   id: 'LOGICAL_QUERY_OPERATOR',
+  //   title: 'Logical Operator',
+  //   options: LOGICAL_QUERY_OPERATORS
+  // },
   COMPARISON_QUERY_OPERATOR: {
     id: 'COMPARISON_QUERY_OPERATOR',
     title: 'Comparison Operator',
@@ -135,35 +140,56 @@ const valueTypeOptions = {
   },
   DATE_TYPE: {
     id: 'DATE_TYPE',
-    title: 'Date'
-  }
+    title: 'Date',
+    defaultValue: 'Date(\'\')'
+  },
+  OBJECT: {
+    id: 'OBJECT',
+    title: 'Object',
+    defaultValue: {
+      'field': 'value'
+    }
+  },
+  OBJECT_ID: {
+    id: 'OBJECT_ID',
+    title: 'Object Id',
+    defaultValue: 'ObjectId(\'\')'
+  },
+  BINARY: {
+    id: 'BINARY',
+    title: 'Binary Data',
+    defaultValue: 'Binary(\'\')'
+  },
+  // Binary, array, $type, $exists, etc.
 };
 
 class QueryValue extends Component {
   static displayName = 'QueryValue';
 
-  // static propTypes = {
-  //   label: PropTypes.string.isRequired,
-  //   serverVersion: PropTypes.string.isRequired,
-  //   autoPopulated: PropTypes.bool.isRequired,
-  //   actions: PropTypes.object.isRequired,
-  //   value: PropTypes.any,
-  //   onChange: PropTypes.func,
-  //   onApply: PropTypes.func,
-  //   placeholder: PropTypes.string,
-  //   schemaFields: PropTypes.array
-  // };
+  static propTypes = {
+    // label: PropTypes.string.isRequired,
+    serverVersion: PropTypes.string.isRequired,
+    // autoPopulated: PropTypes.bool.isRequired,
+    // actions: PropTypes.object.isRequired,
+    onChangeQueryItemValue: PropTypes.func.isRequired,
+    value: PropTypes.any,
+    onChange: PropTypes.func,
+    onApply: PropTypes.func,
+    // placeholder: PropTypes.string,
+    // schemaFields: PropTypes.array
+  };
 
-  // static defaultProps = {
-  //   label: '',
-  //   value: '',
-  //   serverVersion: '3.6.0',
-  //   autoPopulated: false,
-  //   schemaFields: []
-  // };
+  static defaultProps = {
+    label: '',
+    value: '',
+    serverVersion: '3.6.0',
+    autoPopulated: false,
+    schemaFields: []
+  };
 
   state = {
-    queryValue: 'query value'
+    expanded: false
+    // queryValue: 'query value'
   };
 
   /**
@@ -222,14 +248,18 @@ class QueryValue extends Component {
   //   });
   // };
 
-  onClickValueOption = (e, id) => {
+  onClickValueOption = (e, valueOption) => {
     e.preventDefault();
 
-    if (id) {
+    if (valueOption) {
       this.setState({
-        expanded: false,
-        queryValue: id
+        expanded: false
       });
+      this.props.onChangeQueryItemValue(
+        valueOption.defaultValue
+          ? valueOption.defaultValue
+          : valueOption.id
+      );
     }
   }
 
@@ -248,7 +278,7 @@ class QueryValue extends Component {
         <a
           className={styles['query-value-option-link']}
           href="#"
-          onClick={(e) => this.onClickValueOption(e, id)}
+          onClick={(e) => this.onClickValueOption(e, nestedValueOption)}
         >
           {title}
         </a>
@@ -292,7 +322,7 @@ class QueryValue extends Component {
           href="#"
           onClick={(e) => this.onClickValueOption(
             e,
-            (options ? null : id)
+            (options ? null : valueOption)
           )}
         >
           {title}
@@ -305,7 +335,7 @@ class QueryValue extends Component {
   renderExpanded() {
     return (
       <ul
-        className={styles['query-value-picker']}
+        className={styles['query-value-options']}
       >
         {Object.values(valueTypeOptions).map(
           valueOption => (
@@ -314,66 +344,133 @@ class QueryValue extends Component {
               : this.renderNestedValueOption(valueOption)
           )
         )}
-        {/* <div>
-          Logical Operator ($or, $and, $not, $nor)
-        </div>
-        <div>
-          Comparison ($gt, $lt, $in...)
-        </div>
-        <div>
-          $exists
-        </div>
-        <div>
-          $type
-        </div>
-        <div>
-          Date
-        </div>
-        <div>
-          Binary (Image picker?)
-        </div>
-        <div>
-          Geospatial ($geoWithin, $near)
-        </div>
-        <div>
-          Evaluation ($expr, $regex, $text...)
-        </div>
-        <div>
-          Array
-        </div> */}
       </ul>
     );
   }
 
+  renderValuePicker() {
+    // const {
+    //   queryValue
+    // } = this.state;
+
+    const {
+      value,
+      onChangeQueryItemValue
+    } = this.props;
+
+    if (isDate(value)) {
+      return (
+        <div
+          className={styles['value-picker']}
+        >
+          <DateValue
+            queryValue={value}
+            onChangeQueryValue={newQueryValue => {
+              onChangeQueryItemValue(newQueryValue);
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={styles['value-picker']}
+      >
+        Value options - show schema here
+      </div>
+    );
+  }
+
+  renderNestedValue(id) {
+    return (
+      <div
+        className={styles['nested-value-container']}
+        key={`nested-value-${id}`}
+      >
+        <QueryValue
+          // key={`nested-value-${id}`}
+        />
+      </div>
+    );
+  }
+
+  renderArrayOfFields() {
+    const firstId = Math.floor(Math.random() * 1000);
+    const valuesToRender = [{
+      id: firstId
+    }, {
+      id: firstId + 1
+    }];
+
+    return (
+      <div
+        className={styles['nested-array-value-container']}
+      >
+        {valuesToRender.map(id => this.renderNestedValue(id))}
+      </div>
+    );
+  }
+
+  renderAdditionalFields() {
+    // const {
+    //   value
+    // } = this.props;
+
+    // if (value === LOGICAL_QUERY_OPERATORS.$and.id
+    //   || value === LOGICAL_QUERY_OPERATORS.$or.id
+    //   || value === LOGICAL_QUERY_OPERATORS.$nor.id
+    // ) {
+    //   return this.renderArrayOfFields();
+    // }
+
+    // if (value === COMPARISON_OPERATORS.$gt.id
+    //   || value === COMPARISON_OPERATORS.$lt.id
+    // ) {
+    //   return this.renderNestedValue(0);
+    // }
+  }
+
   render() {
     const {
-      expanded,
-      queryValue
+      expanded
     } = this.state;
+
+    const {
+      onChangeQueryItemValue,
+      value
+    } = this.props;
 
     // const symbol = expanded ? 'caret-down' : 'caret-right';
 
     return (
-      <div
-        className={styles['query-value']}
-      >
-        <input
-          type="text"
-          className={styles['query-value-input']}
-          value={queryValue}
-          onChange={e => {
-            this.setState({ queryValue: e.target.value });
-          }}
-        />
-        <button
-          className={styles['query-field-dropdown-button']}
-          onClick={() => { this.setState({ expanded: !expanded }); }}
+      <Fragment>
+        <div
+          className={styles['query-value']}
         >
-          {expanded ? 'V' : '>'}
-          {/* <FontAwesome fixedWidth name={symbol} /> */}
-        </button>
-        {expanded && this.renderExpanded()}
-      </div>
+          <div className={styles['query-value-input-area']}>
+            <input
+              type="text"
+              className={styles['query-value-input']}
+              value={value}
+              onChange={e => {
+                onChangeQueryItemValue(e.target.value);
+              }}
+            />
+            {expanded && this.renderExpanded()}
+            {!expanded && this.renderValuePicker()}
+          </div>
+          <button
+            className={styles['query-field-dropdown-button']}
+            onClick={() => { this.setState({ expanded: !expanded }); }}
+          >
+            {expanded ? 'V' : '>'}
+            {/* <FontAwesome fixedWidth name={symbol} /> */}
+          </button>
+
+        </div>
+        {this.renderAdditionalFields()}
+      </Fragment>
     );
   }
 }

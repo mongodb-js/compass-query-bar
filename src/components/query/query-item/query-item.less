@@ -2,3 +2,47 @@
   width: 100%;
   position: relative;
 }
+
+.query-item-actions-container {
+  display: inline-block;
+  position: relative;
+  padding: 0px 2px;
+}
+
+.query-item-container {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+}
+
+.query-object {
+  position: relative;
+  border-left: 4px solid green;
+  padding: 10px 0;
+}
+
+.query-array {
+  position: relative;
+  border-left: 4px solid green;
+  padding: 10px 0;
+  // padding-left: 10px;
+}
+
+.query-array-item {
+  position: relative;
+  // border-left: 3px solid green;
+  padding: 10px;
+  padding-right: 0;
+  // padding-left: 10px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 0px;
+    width: 10px;
+    // height: 6px;
+    background: green;
+  }
+}
