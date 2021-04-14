@@ -127,7 +127,9 @@ class QueryField extends Component {
     onRenameQueryItem: PropTypes.func.isRequired,
     renameAndUpdateValue: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
-    schemaFields: PropTypes.array
+    schemaFields: PropTypes.array,
+    schemaLoaded: PropTypes.bool,
+    schema: PropTypes.object
     // field: PropTypes.string.isRequired
   };
 
@@ -245,10 +247,10 @@ class QueryField extends Component {
     );
   }
 
-  render() {
-    const {
-      expanded
-    } = this.state;
+  renderAutoComplete() {
+    // const {
+    //   queryValue
+    // } = this.state;
 
     const {
       onRenameQueryItem,
@@ -256,9 +258,63 @@ class QueryField extends Component {
       value
     } = this.props;
 
+    const autocompleteOptions = schemaFields.filter(schemaField => (
+      !value
+      || (
+        schemaField.value.toLowerCase().includes(value.toLowerCase())
+        && schemaField.value !== value
+      )
+    ));
+
+    // if (!autoComplete) {
+
+    // }
+    // console.log('schemaFields', schemaFields);
+
+    return (
+      <ul
+        className={styles.autocomplete}
+      >
+        {autocompleteOptions.map(option => (
+          <li
+            className={styles['autocomplete-option']}
+            key={`${option.value}-${option.name}`}
+          >
+            <a
+              href="#"
+              // onClick={() => console.log('clicked')}
+              onChange={() => {
+                onRenameQueryItem(value, option.value);
+              }}
+              onClick={() => {
+                onRenameQueryItem(value, option.value);
+              }}
+              onSelect={() => {
+                onRenameQueryItem(value, option.value);
+              }}
+            >
+              {option.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  render() {
+    const {
+      expanded
+    } = this.state;
+
+    const {
+      onRenameQueryItem,
+      // schemaFields,
+      value
+    } = this.props;
+
     // const symbol = expanded ? 'caret-down' : 'caret-right';
 
-    console.log('schema fields', schemaFields);
+    // console.log('schema fields', schemaFields);
     // debug('schema fields', schemaFields);
 
     return (
@@ -267,7 +323,7 @@ class QueryField extends Component {
       >
 
         <div className={styles['query-field-input-area']}>
-          <Autocomplete
+          {/* <Autocomplete
             className={styles['query-field-input']}
             getItemValue={(item) => item.value}
             items={schemaFields}
@@ -298,21 +354,23 @@ class QueryField extends Component {
             //   padding: '2px 0',
             //   fontSize: '90%',
             //   position: 'absolute',
-            //   top: 0,
-            //   overflow: 'auto',
+            //   top: '90%',
+            //   left: 0,
+            //   // overflow: 'scro',
             //   maxHeight: '50%',
-            //   height: 'auto'
+            //   // height: 'auto'
             // }}
-          />
-          {/* <input
+          /> */}
+          <input
             type="text"
-
+            className={styles['query-field-input']}
             value={value}
             onChange={e => {
               onRenameQueryItem(value, e.target.value);
             }}
-          /> */}
+          />
           {expanded && this.renderExpanded()}
+          {!expanded && this.renderAutoComplete()}
         </div>
         <button
           className={styles['query-field-dropdown-button']}

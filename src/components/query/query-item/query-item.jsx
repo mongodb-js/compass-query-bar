@@ -64,6 +64,8 @@ class QueryItem extends Component {
     onRenameQueryItem: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
     renameAndUpdateValue: PropTypes.func.isRequired,
+    schema: PropTypes.object,
+    schemaLoaded: PropTypes.bool,
     schemaFields: PropTypes.array,
     value: PropTypes.any.isRequired,
   }
@@ -347,6 +349,8 @@ class QueryItem extends Component {
       renameAndUpdateValue,
       path,
       schemaFields,
+      schema,
+      schemaLoaded,
       value
     } = this.props;
 
@@ -378,6 +382,8 @@ class QueryItem extends Component {
 
             <QueryField
               value={field}
+              schema={schema}
+              schemaLoaded={schemaLoaded}
               // onAddQueryItem={onAddQueryItem}
               renameAndUpdateValue={renameAndUpdateValue}
               // onChangeQueryItemValue={this.onChangeQueryItemValue}
@@ -416,6 +422,8 @@ class QueryItem extends Component {
                             value={nestedValue}
                             key={`${path}-${arrayIndex}-${nestedIndex}`}
                             // queryItem={query}
+                            schema={schema}
+                            schemaLoaded={schemaLoaded}
                             onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
                             onRemoveQueryItem={(fieldNameToDel) => this.onRemoveArrayQueryItem(arrayIndex, fieldNameToDel)}
                             onRenameQueryItem={(currentField, newField) => this.onRenameArrayQueryItem(arrayIndex, currentField, newField)}
@@ -451,6 +459,8 @@ class QueryItem extends Component {
                       // key={`${field}-${index}`}
                       path={`${field}.${nestedField}`}
                       field={nestedField}
+                      schema={schema}
+                      schemaLoaded={schemaLoaded}
                       value={nestedValue}
                       // queryItem={query}
                       onChangeQueryItemValue={this.onChangeQueryItemValue}
@@ -471,6 +481,8 @@ class QueryItem extends Component {
               onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
               value={value}
               schemaFields={schemaFields}
+              schema={schema}
+              schemaLoaded={schemaLoaded}
             />
           )}
         </div>

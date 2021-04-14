@@ -106,6 +106,7 @@ class QueryBar extends Component {
     layout: PropTypes.array,
     expanded: PropTypes.bool,
     lastExecutedQuery: PropTypes.object,
+    ns: PropTypes.string,
     onReset: PropTypes.func,
     onApply: PropTypes.func,
     schemaFields: PropTypes.array
@@ -304,6 +305,7 @@ class QueryBar extends Component {
 
     return (
       <Query
+        ns={this.props.ns}
         // label={label}
         // autoPopulated={autoPopulated}
         serverVersion={this.props.serverVersion}
@@ -425,6 +427,7 @@ class QueryBar extends Component {
   }
 
   render() {
+    console.log('ns', this.props.ns);
     return (
       <div className={styles.component}>
         <div className={styles['input-container']}>

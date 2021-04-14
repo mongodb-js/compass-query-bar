@@ -4,15 +4,15 @@
   display: inline-block;
   position: relative;
   // vertical-align: top;
-  z-index: 10;
+  // z-index: 10;
 }
 
 .query-field-input {
   // z-index: 100;
-  z-index: -1;
-  input {
-    z-index: -10;
-  }
+  // z-index: -1;
+  // input {
+  //   z-index: -10;
+  // }
 
   // &:focus {
   //   z-index: 10000;
@@ -24,6 +24,12 @@
   position: relative;
 
   // z-index: 50000;
+
+  &:focus-within {
+    .autocomplete {
+      display: block;
+    }
+  }
 }
 
 
@@ -101,4 +107,51 @@
   padding: 0;
 
   width: 120px;
+}
+
+.autocomplete {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  top: 100%;
+  background-color: white;
+  // border: 1px solid black;
+
+  list-style: none;
+  padding: 0;
+  width: 100%;
+
+  &:hover, &:focus, &:active, &:focus-within {
+    display: block;
+  }
+
+  .autocomplete-option {
+    border: 1px solid black;
+    border-bottom: none;
+
+    &:not(:first-child) {
+      border-top: 1px solid gray;
+    }
+  
+    &:last-child {
+      border-bottom: 1px solid black;
+    }
+
+
+    &:hover {
+      background-color: #eee;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      width: 100%;
+      padding: 4px;
+      &:hover, &:focus, &:visited, &:active, &:focus-within {
+        text-decoration: none;
+        color: inherit
+      }
+    }
+  }
 }

@@ -759,6 +759,21 @@ const configureStore = (options = {}) => {
 
   if (options.globalAppRegistry) {
     store.globalAppRegistry = options.globalAppRegistry;
+
+    options.globalAppRegistry.on('data-service-connected', (_, ds) => {
+      // this.setState({
+      //   dataService: ds
+      // });
+      console.log('ds', ds);
+
+      global.hackDS = ds;
+
+      // store.setDataProvider(ds);
+
+      // store.setState({
+      //   dataService: ds
+      // });
+    });
   }
 
   if (options.namespace) {

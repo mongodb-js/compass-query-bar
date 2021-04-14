@@ -175,6 +175,8 @@ class QueryValue extends Component {
     value: PropTypes.any,
     onChange: PropTypes.func,
     onApply: PropTypes.func,
+    schemaLoaded: PropTypes.bool,
+    schema: PropTypes.object
     // placeholder: PropTypes.string,
     // schemaFields: PropTypes.array
   };

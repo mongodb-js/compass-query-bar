@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EJSON } from 'bson';
+import parseSchema from 'mongodb-schema';
+import util from 'util';
 
 import styles from './query.less';
 
@@ -38,6 +40,7 @@ class Query extends Component {
     value: PropTypes.any,
     onChange: PropTypes.func,
     onApply: PropTypes.func,
+    ns: PropTypes.string,
     placeholder: PropTypes.string,
     schemaFields: PropTypes.array
   };
@@ -50,11 +53,11 @@ class Query extends Component {
     schemaFields: []
   };
 
-  state = {
-    query: {
-      'field': 'value'
-    }
-  };
+  // state = {
+  //   query: {
+  //     'field': 'value'
+  //   }
+  // };
 
   /**
    * Set up the autocompleters once on initialization.
@@ -63,6 +66,24 @@ class Query extends Component {
    */
   constructor(props) {
     super(props);
+
+    const {
+      value
+    } = this.props;
+
+    let query = {};
+    try {
+      query = EJSON.parse(value);
+    } catch (err) {
+      console.log('unable to parse existing query:', err);
+    }
+
+    this.state = {
+      query,
+      schemaLoaded: false,
+      schema: {}
+    };
+
     // const textCompleter = tools.textCompleter;
     // this.completer = new QueryAutoCompleter(props.serverVersion, textCompleter, props.schemaFields);
     // this.boundOnFieldsChanged = this.onFieldsChanged.bind(this);
@@ -71,12 +92,57 @@ class Query extends Component {
   /**
    * Subscribe on mount.
    */
-  // componentDidMount() {
-  //   this.unsub = this.props.actions.refreshEditor.listen(() => {
-  //     this.editor.setValue(this.props.value);
-  //     this.editor.clearSelection();
-  //   });
-  // }
+  componentDidMount() {
+    this.loadSchema();
+
+    // this.unsub = this.props.actions.refreshEditor.listen(() => {
+    //   this.editor.setValue(this.props.value);
+    //   this.editor.clearSelection();
+    // });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.ns !== this.props.ns) {
+      this.loadSchema();
+    }
+  }
+
+  loadSchema = async() => {
+    const {
+      ns
+    } = this.props;
+
+    this.setState({
+      schemaLoaded: false
+    });
+
+    if (global.hackDS) {
+      console.log('load schema for ns', ns);
+
+      const runFind = util.promisify(global.hackDS.find.bind(global.hackDS));
+      try {
+        const documents = await runFind(ns, {}, {});
+
+        const runParseSchema = util.promisify(parseSchema);
+        const schema = await runParseSchema(documents);
+
+        console.log('schema loaded', schema);
+
+        this.setState({
+          schemaLoaded: true,
+          schema
+        });
+      } catch (e) {
+        console.log('failed to fetch or parse schema of documents:', e);
+      }
+    } else {
+      console.log('no ds, pollling...');
+      // Hacky polling with no cleanup :)
+      setTimeout(() => {
+        this.loadSchema();
+      }, 200);
+    }
+  }
 
   // /**
   //  * @param {Object} nextProps - The next properties.
@@ -203,15 +269,20 @@ class Query extends Component {
     // } = this.state;
 
     const {
+      schema,
+      schemaLoaded
+    } = this.state;
+
+    const {
       schemaFields,
       value
     } = this.props;
 
     let query = {};
     try {
-      console.log('ok');
-      query = EJSON.parse(value);
+      query = value ? EJSON.parse(value) : {};
     } catch (err) {
+      console.log('existing:', value);
       console.log('unable to parse existing query:', err);
     }
 
@@ -230,6 +301,8 @@ class Query extends Component {
               field={field}
               value={fieldValue}
               // queryItem={query}
+              schema={schema}
+              schemaLoaded={schemaLoaded}
               schemaFields={schemaFields}
               onChangeQueryItemValue={this.onChangeQueryItemValue}
               onRemoveQueryItem={this.onRemoveQueryItem}

@@ -71,13 +71,18 @@ const connection = new Connection({
   port: 27017,
   ns: 'admin'
 });
-const dataService = new DataService(connection);
-dataService.connect((error, ds) => {
-  appRegistry.emit('data-service-connected', error, ds);
-  setDataProvider(store, error, ds);
-  setNamespace(store, 'echo.bands');
-  // setViewSource(store, 'citibike.tripsOfShortDuration', [{ $match: { gender: 1 }}]);
+setTimeout(() => {
+  const dataService = new DataService(connection);
+  dataService.connect((error, ds) => {
+    appRegistry.emit('data-service-connected', error, ds);
+
+    // store.setDataProvider(ds);
+    // setDataProvider(store, error, ds);
+    // setNamespace(store, 'echo.bands');
+    // setViewSource(store, 'citibike.tripsOfShortDuration', [{ $match: { gender: 1 }}]);
+  });
 });
+
 
 localAppRegistry.emit('fields-changed', { aceFields: [
   { name: 'harry',
