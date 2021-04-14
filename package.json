@@ -176,7 +176,6 @@
     "mongodb-client-encryption": "^1.2.3",
     "mongodb-query-util": "^0.2.1",
     "node-fetch": "^2.6.1",
-    "react-autocomplete": "^1.8.1",
     "react-datetime": "^3.0.4",
     "react-leaflet": "^3.1.0",
     "react-leaflet-draw": "^0.19.7",

@@ -44,7 +44,7 @@ import {
 } from 'constants/query-bar-store';
 import configureQueryChangedStore from './query-changed-store';
 
-import { dataServiceConnected } from './data-service';
+// import { dataServiceConnected } from './data-service';
 
 const debug = require('debug')('mongodb-compass:stores:query-bar');
 
@@ -325,6 +325,7 @@ const configureStore = (options = {}) => {
      * @param {Boolean} autoPopulated - flag to indicate whether the query was auto-populated or not.
      */
     setQuery(query, autoPopulated = false) {
+      // console.log('setQuerysetQuery', query);
       if (isUndefined(query) || isNull(query)) {
         query = this._getDefaultQuery();
       }
@@ -795,7 +796,8 @@ const configureStore = (options = {}) => {
  * @param {Object} provider - The data provider.
  */
 export const setDataProvider = (store, error, provider) => {
-  store.dispatch(dataServiceConnected(error, provider));
+  console.log('set data povider!!!!');
+  // store.dispatch(dataServiceConnected(error, provider));
 };
 
 export default configureStore;

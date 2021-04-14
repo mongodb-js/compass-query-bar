@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Autocomplete from 'react-autocomplete';
+// import Autocomplete from 'react-autocomplete';
 
 import styles from './query-field.less';
 
@@ -129,7 +129,8 @@ class QueryField extends Component {
     value: PropTypes.string.isRequired,
     schemaFields: PropTypes.array,
     schemaLoaded: PropTypes.bool,
-    schema: PropTypes.object
+    schema: PropTypes.object,
+    path: PropTypes.string.isRequired
     // field: PropTypes.string.isRequired
   };
 
@@ -254,21 +255,83 @@ class QueryField extends Component {
 
     const {
       onRenameQueryItem,
-      schemaFields,
+      schema,
+      path,
       value
     } = this.props;
 
-    const autocompleteOptions = schemaFields.filter(schemaField => (
-      !value
-      || (
-        schemaField.value.toLowerCase().includes(value.toLowerCase())
-        && schemaField.value !== value
-      )
-    ));
+    const pathDepth = this.props.path.split('.').length;
+    function getMatchingField(fieldName, arrayOfFields) {
+      let match;
+      if (arrayOfFields) {
+        arrayOfFields.forEach(field => {
+          // console.log('field.name === ', field.name, fieldName);
+          if (field.name === fieldName) {
+            // console.log('true');
+            match = field;
+          }
+        });
+      }
 
-    // if (!autoComplete) {
+      return match;
+    }
 
-    // }
+    let autocompleteOptions;
+    let doesntMatch = false;
+
+
+    const fields = schema.fields;
+    path.split('.').map((interiorPath, index) => {
+      // console.log('check', interiorPath);
+      if (doesntMatch) {
+        return;
+      }
+
+      if (index === pathDepth - 1) {
+        // type = fields[];
+        // if (!fields[])
+        // const matchingField = getMatchingField(interiorPath, fields);
+        // if (!matchingField) {
+        //   doesntMatch = true;
+        //   return;
+        // }
+
+        if (fields) {
+          autocompleteOptions = fields.filter(schemaField => (
+            !value
+            || (
+              schemaField.name.toLowerCase().includes(value.toLowerCase())
+              && schemaField.name !== value
+            )
+          ));
+        }
+
+        return;
+      }
+
+      if (!doesntMatch) {
+        const matchingField = getMatchingField(interiorPath, fields);
+        if (!matchingField) {
+          doesntMatch = true;
+          return;
+        }
+
+        // TODO: Nested fields.
+        // fields =
+      }
+    });
+
+    // const autocompleteOptions = schemaFields.filter(schemaField => (
+    //   !value
+    //   || (
+    //     schemaField.value.toLowerCase().includes(value.toLowerCase())
+    //     && schemaField.value !== value
+    //   )
+    // ));
+
+    if (!autocompleteOptions || autocompleteOptions.length === 0) {
+      return;
+    }
     // console.log('schemaFields', schemaFields);
 
     return (
@@ -278,19 +341,19 @@ class QueryField extends Component {
         {autocompleteOptions.map(option => (
           <li
             className={styles['autocomplete-option']}
-            key={`${option.value}-${option.name}`}
+            key={`${option.name}`}
           >
             <a
               href="#"
               // onClick={() => console.log('clicked')}
               onChange={() => {
-                onRenameQueryItem(value, option.value);
+                onRenameQueryItem(value, option.name);
               }}
               onClick={() => {
-                onRenameQueryItem(value, option.value);
+                onRenameQueryItem(value, option.name);
               }}
               onSelect={() => {
-                onRenameQueryItem(value, option.value);
+                onRenameQueryItem(value, option.name);
               }}
             >
               {option.name}

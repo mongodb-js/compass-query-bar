@@ -20,13 +20,6 @@ import 'less/index.less';
 
 const appRegistry = new AppRegistry();
 
-global.hadronApp = app;
-global.hadronApp.appRegistry = appRegistry;
-
-// Activate our plugin with the Hadron App Registry
-activate(appRegistry);
-appRegistry.onActivated();
-
 // Since we are using HtmlWebpackPlugin WITHOUT a template,
 // we should create our own root node in the body element before rendering into it.
 const root = document.createElement('div');
@@ -34,15 +27,39 @@ root.id = 'root';
 document.body.appendChild( root );
 // global.root = root;
 
-const actions = configureActions();
+global.hadronApp = app;
+global.hadronApp.appRegistry = appRegistry;
+
+// Activate our plugin with the Hadron App Registry
+activate(appRegistry);
+appRegistry.onActivated();
+
+// activateQueryBar(localAppRegistry);
+
 const localAppRegistry = new AppRegistry();
+
+// const queryBarActions = queryBarRole.configureActions();
+// const queryBarStore = queryBarRole.configureStore({
+//   localAppRegistry: localAppRegistry,
+//   serverVersion: '4.2.0',
+//   actions: queryBarActions
+// });
+
+// const actions = configureActions();
+// const store = configureStore({
+//   localAppRegistry: localAppRegistry,
+//   globalAppRegistry: appRegistry,
+//   actions: actions
+// });
+
+const actions = configureActions();
 const store = configureStore({
   globalAppRegistry: appRegistry,
   localAppRegistry: localAppRegistry,
   serverVersion: '4.2.0',
   // namespace: 'echo.artists',
   namespace: 'test.shipwrecks',
-  actions: actions,
+  actions,
   fields: [
     { name: 'harry',
       value: 'harry',
@@ -56,6 +73,12 @@ const store = configureStore({
       version: '0.0.0' }
   ]
 });
+
+// Maybe appRegistry.
+const queryBarRole = appRegistry.getRole('Query.QueryBar')[0];
+
+localAppRegistry.registerStore(queryBarRole.storeName, store);
+localAppRegistry.registerAction(queryBarRole.actionName, actions);
 
 // Create a HMR enabled render function
 const render = Component => {

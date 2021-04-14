@@ -291,18 +291,18 @@ class QueryItem extends Component {
       ...this.props.value
     ];
 
-    let newFieldName = 'new field';
+    let newFieldName = '';
     if (newValue[arrayIndex][newFieldName]) {
       let counter = 1;
-      while (!!newValue[arrayIndex][`new field ${counter}`]) {
+      while (!!newValue[arrayIndex][`field ${counter}`]) {
         counter++;
       }
-      newFieldName = `new field ${counter}`;
+      newFieldName = `field ${counter}`;
     }
 
     newValue[arrayIndex] = {
       ...newValue[arrayIndex],
-      [newFieldName]: 'new value'
+      [newFieldName]: ''
     };
     this.props.onChangeQueryItemValue(this.props.field, newValue);
   }
@@ -312,7 +312,7 @@ class QueryItem extends Component {
       const newValue = [
         ...this.props.value,
         {
-          'new field': 'new value'
+          '': ''
         }
       ];
       this.props.onChangeQueryItemValue(this.props.field, newValue);
@@ -320,18 +320,18 @@ class QueryItem extends Component {
       return;
     }
 
-    let newFieldName = 'new field';
+    let newFieldName = '';
     if (this.props.value[newFieldName]) {
       let counter = 1;
-      while (!!this.props.value[`new field ${counter}`]) {
+      while (!!this.props.value[`field ${counter}`]) {
         counter++;
       }
-      newFieldName = `new field ${counter}`;
+      newFieldName = `field ${counter}`;
     }
 
     const newValue = {
       ...this.props.value,
-      [newFieldName]: 'new value'
+      [newFieldName]: ''
     };
 
     this.props.onChangeQueryItemValue(this.props.field, newValue);
@@ -395,6 +395,7 @@ class QueryItem extends Component {
               // onChangeQueryItemValue={this.onChangeQueryItemValue}
               onRenameQueryItem={onRenameQueryItem}
               schemaFields={schemaFields}
+              path={path}
               store={store}
             />
             <span

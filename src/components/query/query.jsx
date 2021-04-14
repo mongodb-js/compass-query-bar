@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { EJSON } from 'bson';
 import parseSchema from 'mongodb-schema';
 import util from 'util';
+import queryParser from 'mongodb-query-parser';
 
 import styles from './query.less';
 
@@ -56,6 +57,8 @@ class Query extends Component {
     schemaFields: []
   };
 
+  // mounted = false;
+
   // state = {
   //   query: {
   //     'field': 'value'
@@ -76,9 +79,14 @@ class Query extends Component {
 
     let query = {};
     try {
-      query = EJSON.parse(value);
+      console.log('value', value);
+      query = (value && value !== '')
+        ? EJSON.parse(value)
+        : {'': ''};
+      console.log('query', query);
     } catch (err) {
       console.log('unable to parse existing query:', err);
+      query = value;
     }
 
     this.state = {
@@ -96,12 +104,17 @@ class Query extends Component {
    * Subscribe on mount.
    */
   componentDidMount() {
+    this.mounted = true;
     this.loadSchema();
 
     // this.unsub = this.props.actions.refreshEditor.listen(() => {
     //   this.editor.setValue(this.props.value);
     //   this.editor.clearSelection();
     // });
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   componentDidUpdate(prevProps) {
@@ -111,39 +124,55 @@ class Query extends Component {
   }
 
   loadSchema = async() => {
-    const {
-      ns
-    } = this.props;
+    if (!this.mounted) {
+      return;
+    }
 
     this.setState({
       schemaLoaded: false
     });
 
     if (global.hackDS) {
-      console.log('load schema for ns', ns);
-
-      const runFind = util.promisify(global.hackDS.find.bind(global.hackDS));
-      try {
-        const documents = await runFind(ns, {}, {});
-
-        const runParseSchema = util.promisify(parseSchema);
-        const schema = await runParseSchema(documents);
-
-        console.log('schema loaded', schema);
-
-        this.setState({
-          schemaLoaded: true,
-          schema
-        });
-      } catch (e) {
-        console.log('failed to fetch or parse schema of documents:', e);
-      }
+      await this.loadSchemaWithDataService(global.hackDS);
+    } else if (
+      global.hadronApp
+      && global.hadronApp.appRegistry
+      && global.hadronApp.appRegistry.stores
+      && global.hadronApp.appRegistry.stores['Connect.Store']
+      && global.hadronApp.appRegistry.stores['Connect.Store'].dataService
+    ) {
+      await this.loadSchemaWithDataService(global.hadronApp.appRegistry.stores['Connect.Store'].dataService);
     } else {
       console.log('no ds, pollling...');
       // Hacky polling with no cleanup :)
       setTimeout(() => {
         this.loadSchema();
       }, 200);
+    }
+  }
+
+  loadSchemaWithDataService = async(dataService) => {
+    const {
+      ns
+    } = this.props;
+
+    console.log('load schema for ns', ns);
+
+    const runFind = util.promisify(dataService.find.bind(dataService));
+    try {
+      const documents = await runFind(ns, {}, {});
+
+      const runParseSchema = util.promisify(parseSchema);
+      const schema = await runParseSchema(documents);
+
+      console.log('schema loaded', schema);
+
+      this.setState({
+        schemaLoaded: true,
+        schema
+      });
+    } catch (e) {
+      console.log('failed to fetch or parse schema of documents:', e);
     }
   }
 
@@ -241,18 +270,18 @@ class Query extends Component {
   }
 
   onAddQueryItem = () => {
-    let newFieldName = 'new field';
+    let newFieldName = '';
     if (this.state.query[newFieldName]) {
       let counter = 1;
-      while (!!this.state.query[`new field ${counter}`]) {
+      while (!!this.state.query[`field ${counter}`]) {
         counter++;
       }
-      newFieldName = `new field ${counter}`;
+      newFieldName = `field ${counter}`;
     }
 
     const newQuery = {
       ...this.state.query,
-      [newFieldName]: 'new value'
+      [newFieldName]: 'value'
     };
 
     // TODO: Check that new field doesn't exist.
@@ -286,11 +315,24 @@ class Query extends Component {
 
     let query = {};
     try {
-      query = value ? EJSON.parse(value) : {};
+      // console.log('value', value);
+      query = (value && value !== '')
+        ? EJSON.parse(value)
+        : {'': ''};
+      // console.log('query', query);
     } catch (err) {
-      console.log('existing:', value);
+      console.log('existing', value);
       console.log('unable to parse existing query:', err);
+      try {
+        query = queryParser.parseFilter(value);
+        // query = value;
+        //
+      } catch (e) {
+        console.log('unable to parse filter either, defaulting...');
+        //
+      }
     }
+    console.log('query now', query);
 
     // console.log('value', value);
     // console.log('target val', value.target.value);

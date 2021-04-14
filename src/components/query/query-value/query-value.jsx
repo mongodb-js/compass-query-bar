@@ -441,6 +441,8 @@ class QueryValue extends Component {
           doesntMatch = true;
           return;
         }
+        // TODO: Nested fields.
+        // fields =
       }
     });
 
@@ -449,12 +451,11 @@ class QueryValue extends Component {
     // const type = schema
 
     if (doesntMatch) {
-      console.log('no type suggestion found for', this.props.path);
+      // console.log('no type suggestion found for', this.props.path);
       // return;
     }
 
-    console.log(this.props.path, 'type', type);
-
+    // console.log(this.props.path, 'type', type);
 
     return (
       <div
