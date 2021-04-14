@@ -10,13 +10,14 @@
 
   &:focus-within {
     .value-picker {
-      display: block;
+      // display: block;
+      visibility: visible;
     }
   }
 }
 
 .query-value-input {
-
+  
 }
 
 .query-value-options {
@@ -128,14 +129,20 @@
 }
 
 .value-picker {
-  display: none;
+  // display: none;
+  display: block;
+  visibility: hidden;
   position: absolute;
   z-index: 1000;
   top: 100%;
   background-color: white;
   border: 1px solid black;
 
+  min-width: 300px;
+  min-height: 300px;
+
   &:hover, &:focus, &:active, &:focus-within {
-    display: block;
+    // display: block;
+    visibility: visible;
   }
 }

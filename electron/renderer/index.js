@@ -32,6 +32,7 @@ appRegistry.onActivated();
 const root = document.createElement('div');
 root.id = 'root';
 document.body.appendChild( root );
+// global.root = root;
 
 const actions = configureActions();
 const localAppRegistry = new AppRegistry();
@@ -39,7 +40,8 @@ const store = configureStore({
   globalAppRegistry: appRegistry,
   localAppRegistry: localAppRegistry,
   serverVersion: '4.2.0',
-  namespace: 'echo.artists',
+  // namespace: 'echo.artists',
+  namespace: 'test.shipwrecks',
   actions: actions,
   fields: [
     { name: 'harry',

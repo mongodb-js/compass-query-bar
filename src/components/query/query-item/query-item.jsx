@@ -57,6 +57,8 @@ class QueryItem extends Component {
   static displayName = 'QueryItem';
 
   static propTypes = {
+    actions: PropTypes.object.isRequired,
+    localAppRegistry: PropTypes.object.isRequired,
     field: PropTypes.string.isRequired,
     onRemoveQueryItem: PropTypes.func.isRequired,
     onChangeQueryItemValue: PropTypes.func.isRequired,
@@ -68,6 +70,7 @@ class QueryItem extends Component {
     schemaLoaded: PropTypes.bool,
     schemaFields: PropTypes.array,
     value: PropTypes.any.isRequired,
+    store: PropTypes.object,
   }
 
   // static propTypes = {
@@ -341,6 +344,8 @@ class QueryItem extends Component {
    */
   render() {
     const {
+      actions,
+      localAppRegistry,
       field,
       onRemoveQueryItem,
       onChangeQueryItemValue,
@@ -351,6 +356,7 @@ class QueryItem extends Component {
       schemaFields,
       schema,
       schemaLoaded,
+      store,
       value
     } = this.props;
 
@@ -389,6 +395,7 @@ class QueryItem extends Component {
               // onChangeQueryItemValue={this.onChangeQueryItemValue}
               onRenameQueryItem={onRenameQueryItem}
               schemaFields={schemaFields}
+              store={store}
             />
             <span
 
@@ -416,6 +423,8 @@ class QueryItem extends Component {
                       {Object.entries(expresssion).map(
                         ([nestedField, nestedValue], nestedIndex) => (
                           <QueryItem
+                            actions={actions}
+                            localAppRegistry={localAppRegistry}
                             // key={`${field}-${index}`}
                             path={`${field}.${arrayIndex}.${nestedField}`}
                             field={nestedField}
@@ -430,6 +439,7 @@ class QueryItem extends Component {
                             onAddQueryItem={() => this.onAddArrayQueryItem(arrayIndex)}
                             renameAndUpdateValue={(currentIndex, newIndex, newVal) => this.arrayRenameAndUpdateValue(arrayIndex, currentIndex, newIndex, newVal)}
                             schemaFields={schemaFields}
+                            store={store}
                           />
                         )
                       )}
@@ -457,6 +467,8 @@ class QueryItem extends Component {
                   ([nestedField, nestedValue], index) => (
                     <QueryItem
                       // key={`${field}-${index}`}
+                      actions={actions}
+                      localAppRegistry={localAppRegistry}
                       path={`${field}.${nestedField}`}
                       field={nestedField}
                       schema={schema}
@@ -469,6 +481,7 @@ class QueryItem extends Component {
                       onAddQueryItem={this.onAddQueryItem}
                       renameAndUpdateValue={this.renameAndUpdateValue}
                       schemaFields={schemaFields}
+                      store={store}
                     />
                   )
                 )}
@@ -478,11 +491,16 @@ class QueryItem extends Component {
           )}
           {!Array.isArray(value) && !isObject(value) && (
             <QueryValue
+              // TODO: Path using path.
+              actions={actions}
+              localAppRegistry={localAppRegistry}
+              path={`${field}`}
               onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
               value={value}
               schemaFields={schemaFields}
               schema={schema}
               schemaLoaded={schemaLoaded}
+              store={store}
             />
           )}
         </div>

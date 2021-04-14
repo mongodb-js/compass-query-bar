@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 
 import styles from './query-value.less';
 import DateValue from './date-value/date-value';
+import Minichart from '../../schema/minichart';
 
 const dateRegex = new RegExp('Date\(.*\)$');
 function isDate(value) {
@@ -167,18 +168,22 @@ class QueryValue extends Component {
   static displayName = 'QueryValue';
 
   static propTypes = {
+    // actions:
     // label: PropTypes.string.isRequired,
     serverVersion: PropTypes.string.isRequired,
     // autoPopulated: PropTypes.bool.isRequired,
-    // actions: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired,
     onChangeQueryItemValue: PropTypes.func.isRequired,
     value: PropTypes.any,
     onChange: PropTypes.func,
     onApply: PropTypes.func,
     schemaLoaded: PropTypes.bool,
-    schema: PropTypes.object
+    schema: PropTypes.object,
+    path: PropTypes.string,
+    localAppRegistry: PropTypes.object,
     // placeholder: PropTypes.string,
     // schemaFields: PropTypes.array
+    store: PropTypes.object
   };
 
   static defaultProps = {
@@ -375,11 +380,105 @@ class QueryValue extends Component {
       );
     }
 
+    const {
+      schema,
+      store
+    } = this.props;
+
+    const fields = schema.fields;
+    let type;
+    let types;
+    const pathDepth = this.props.path.split('.').length;
+    // for (let i = 0; i < pathDepth; i++) {
+
+    // }
+    function getMatchingField(fieldName, arrayOfFields) {
+      let match;
+      if (arrayOfFields) {
+        arrayOfFields.forEach(field => {
+          // console.log('field.name === ', field.name, fieldName);
+          if (field.name === fieldName) {
+            // console.log('true');
+            match = field;
+          }
+        });
+      }
+
+      return match;
+    }
+
+    let doesntMatch = false;
+    this.props.path.split('.').map((interiorPath, index) => {
+      // console.log('check', interiorPath);
+      if (doesntMatch) {
+        return;
+      }
+
+      if (index === pathDepth - 1) {
+        // type = fields[];
+        // if (!fields[])
+        const matchingField = getMatchingField(interiorPath, fields);
+        if (!matchingField) {
+          doesntMatch = true;
+          return;
+        }
+
+        // console.log('matches', matchingField);
+
+        types = matchingField;
+        // types = undefined;
+        // type = matchingField;// .type;
+        if (matchingField.types.length > 0) {
+          type = matchingField.types[0];
+        }
+
+        return;
+      }
+
+      if (!doesntMatch) {
+        const matchingField = getMatchingField(interiorPath, fields);
+        if (!matchingField) {
+          doesntMatch = true;
+          return;
+        }
+      }
+    });
+
+    // console.log('schema at value', schema);
+    // console.log('path', this.props.path);
+    // const type = schema
+
+    if (doesntMatch) {
+      console.log('no type suggestion found for', this.props.path);
+      // return;
+    }
+
+    console.log(this.props.path, 'type', type);
+
+
     return (
       <div
         className={styles['value-picker']}
       >
-        Value options - show schema here
+        Minichart V
+        {doesntMatch && (
+          <div>
+            <em>
+            No suggestions found.
+            </em>
+          </div>
+        )}
+        {!doesntMatch && (
+          <Minichart
+            fieldName={this.props.path}
+            // TODO: Schema pass this type.
+            type={type} // {activeType}
+            nestedDocType={types} // nestedDocType
+            actions={this.props.actions}
+            localAppRegistry={this.props.localAppRegistry}
+            store={store}
+          />
+        )}
       </div>
     );
   }

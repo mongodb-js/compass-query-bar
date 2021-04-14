@@ -33,6 +33,8 @@ class Query extends Component {
   static displayName = 'Query';
 
   static propTypes = {
+    // actions: PropTypes.object.isRequired,
+    localAppRegistry: PropTypes.object.isRequired,
     // label: PropTypes.string.isRequired,
     serverVersion: PropTypes.string.isRequired,
     // autoPopulated: PropTypes.bool.isRequired,
@@ -42,7 +44,8 @@ class Query extends Component {
     onApply: PropTypes.func,
     ns: PropTypes.string,
     placeholder: PropTypes.string,
-    schemaFields: PropTypes.array
+    schemaFields: PropTypes.array,
+    store: PropTypes.object
   };
 
   static defaultProps = {
@@ -274,7 +277,10 @@ class Query extends Component {
     } = this.state;
 
     const {
+      actions,
+      localAppRegistry,
       schemaFields,
+      store,
       value
     } = this.props;
 
@@ -296,6 +302,8 @@ class Query extends Component {
         {Object.entries(query).map(
           ([field, fieldValue], index) => (
             <QueryItem
+              actions={actions}
+              localAppRegistry={localAppRegistry}
               key={`${index}`}
               path={field}
               field={field}
@@ -304,6 +312,7 @@ class Query extends Component {
               schema={schema}
               schemaLoaded={schemaLoaded}
               schemaFields={schemaFields}
+              store={store}
               onChangeQueryItemValue={this.onChangeQueryItemValue}
               onRemoveQueryItem={this.onRemoveQueryItem}
               onRenameQueryItem={this.onRenameQueryItem}

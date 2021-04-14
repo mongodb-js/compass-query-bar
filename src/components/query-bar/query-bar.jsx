@@ -99,6 +99,8 @@ class QueryBar extends Component {
     skipString: PropTypes.string,
     limitString: PropTypes.string,
 
+    // localAppRegistry: PropTypes.object.isRequired,
+
     actions: PropTypes.object,
     buttonLabel: PropTypes.string,
     queryState: PropTypes.string,
@@ -305,6 +307,8 @@ class QueryBar extends Component {
 
     return (
       <Query
+        localAppRegistry={this.props.store.localAppRegistry}
+        actions={this.props.actions}
         ns={this.props.ns}
         // label={label}
         // autoPopulated={autoPopulated}
@@ -320,6 +324,7 @@ class QueryBar extends Component {
         onChange={this.onChange.bind(this, option)}
         onApply={this.onApplyButtonClicked}
         schemaFields={this.props.schemaFields}
+        store={this.props.store}
       />
     );
   }
@@ -427,7 +432,7 @@ class QueryBar extends Component {
   }
 
   render() {
-    console.log('ns', this.props.ns);
+    // console.log('ns', this.props.ns);
     return (
       <div className={styles.component}>
         <div className={styles['input-container']}>
