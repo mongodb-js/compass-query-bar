@@ -9,6 +9,40 @@ import styles from './query.less';
 
 import QueryItem from './query-item/query-item';
 
+function parseQueryFromStore(value) {
+  let query = {};
+  try {
+    // console.log('value', value);
+    query = (value && value !== '')
+      ? EJSON.parse(value, { relaxed: false })
+      : {'': ''};
+    // console.log('query', query);
+  } catch (err) {
+    // console.log('existing', value);
+    // console.log('unable to parse existing query:', err);
+    try {
+      query = queryParser.parseFilter(value);
+
+      // console.log('early parsed q', query);
+      // query = EJSON.stringify(query);
+      // console.log('stringified q', query);
+
+      // query = EJSON.parse(query, { relaxed: false });
+      // console.log('parsed q', query);
+      // query = value;
+      //
+    } catch (e) {
+      console.log('unable to parse filter either, defaulting...');
+      //
+    }
+  }
+  query = EJSON.stringify(query);
+  query = JSON.parse(query);
+
+  // console.log('resulting q', query);
+  return query;
+}
+
 // Innefficient but seems to work lol
 function replaceKeyInSameSpot(objToCopy, currentIndex, newIndex, newValue) {
   let newObject = {};
@@ -77,20 +111,8 @@ class Query extends Component {
       value
     } = this.props;
 
-    let query = {};
-    try {
-      console.log('value', value);
-      query = (value && value !== '')
-        ? EJSON.parse(value)
-        : {'': ''};
-      console.log('query', query);
-    } catch (err) {
-      console.log('unable to parse existing query:', err);
-      query = value;
-    }
-
     this.state = {
-      query,
+      query: parseQueryFromStore(value),
       schemaLoaded: false,
       schema: {}
     };
@@ -198,9 +220,14 @@ class Query extends Component {
   // }
 
   onChangeQuery = (queryObj) => {
+    console.log('query object before stringing', queryObj);
     let newCode = '';
     try {
+      // console.log('serialized:', EJSON.serialize(queryObj));
       newCode = EJSON.stringify(queryObj);
+      console.log('after stringing', newCode);
+      // newCode = queryParser.stringify(queryObj);
+      // console.log('stringified ejson')
       // newCode = JSON.stringify(queryObj);
     } catch (e) {
       console.log('unable to parse query as json:', e);
@@ -214,10 +241,13 @@ class Query extends Component {
   };
 
   onChangeQueryItemValue = (index, newValue) => {
+    console.log('onChangeQueryItemValue', index, newValue);
     const newQuery = {
       ...this.state.query,
       [index]: newValue
     };
+    console.log('new q after that', newQuery);
+
     this.setState({
       query: newQuery
     });
@@ -281,7 +311,7 @@ class Query extends Component {
 
     const newQuery = {
       ...this.state.query,
-      [newFieldName]: 'value'
+      [newFieldName]: ''
     };
 
     // TODO: Check that new field doesn't exist.
@@ -313,29 +343,7 @@ class Query extends Component {
       value
     } = this.props;
 
-    let query = {};
-    try {
-      // console.log('value', value);
-      query = (value && value !== '')
-        ? EJSON.parse(value)
-        : {'': ''};
-      // console.log('query', query);
-    } catch (err) {
-      console.log('existing', value);
-      console.log('unable to parse existing query:', err);
-      try {
-        query = queryParser.parseFilter(value);
-        // query = value;
-        //
-      } catch (e) {
-        console.log('unable to parse filter either, defaulting...');
-        //
-      }
-    }
-    console.log('query now', query);
-
-    // console.log('value', value);
-    // console.log('target val', value.target.value);
+    const query = parseQueryFromStore(value);
 
     return (
       <div
@@ -349,6 +357,7 @@ class Query extends Component {
               key={`${index}`}
               path={field}
               field={field}
+              // bsonType={bsonDoc._bsontype ? bsonDoc._bsontype : null}
               value={fieldValue}
               // queryItem={query}
               schema={schema}

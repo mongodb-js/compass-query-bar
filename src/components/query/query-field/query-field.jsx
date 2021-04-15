@@ -139,6 +139,32 @@ class QueryField extends Component {
     queryValue: 'query field'
   };
 
+  constructor(props) {
+    super(props);
+
+    this.queryValueOptionsRef = React.createRef();
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
+
+  handleClickOutside = (event) => {
+    if (
+      this.state.expanded
+      && this.queryValueOptionsRef
+      && this.queryValueOptionsRef.current
+      && !this.queryValueOptionsRef.current.contains(event.target)
+    ) {
+      this.setState({
+        expanded: false
+      });
+    }
+  }
 
   onClickValueOption = (e, valueOption) => {
     e.preventDefault();
@@ -236,6 +262,7 @@ class QueryField extends Component {
     return (
       <ul
         className={styles['query-value-options']}
+        ref={this.queryValueOptionsRef}
       >
         {Object.values(valueTypeOptions).map(
           valueOption => (
@@ -355,6 +382,7 @@ class QueryField extends Component {
               onSelect={() => {
                 onRenameQueryItem(value, option.name);
               }}
+              tabIndex={0}
             >
               {option.name}
             </a>

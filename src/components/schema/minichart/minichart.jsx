@@ -8,7 +8,7 @@ import ArrayMinichart from '../array-minichart';
 import CoordinatesMinichart from '../coordinates-minichart';
 import D3Component from '../d3-component';
 import vizFns from 'modules';
-import CONSTANTS from 'constants/schema';
+import CONSTANTS from '../../../constants/schema';
 
 class MiniChart extends Component {
   static displayName = 'MiniChartComponent';

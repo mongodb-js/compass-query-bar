@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { has, includes, isString } from 'lodash';
 import { hasDistinctValue } from 'mongodb-query-util';
 
-import { DECIMAL_128, DOUBLE, LONG, INT_32 } from 'constants';
+import CONSTANTS from '../../../constants/schema';
+
 
 class ValueBubble extends Component {
   static displayName = 'ValueBubbleComponent';
@@ -35,10 +36,10 @@ class ValueBubble extends Component {
    */
   _extractStringValue(value) {
     if (has(value, '_bsontype')) {
-      if (includes([ DECIMAL_128, LONG ], value._bsontype)) {
+      if (includes([ CONSTANTS.DECIMAL_128, CONSTANTS.LONG ], value._bsontype)) {
         return value.toString();
       }
-      if (includes([ DOUBLE, INT_32 ], value._bsontype)) {
+      if (includes([ CONSTANTS.DOUBLE, CONSTANTS.INT_32 ], value._bsontype)) {
         return String(value.value);
       }
     }

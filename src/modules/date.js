@@ -1,5 +1,5 @@
 /* eslint no-use-before-define: 0, camelcase:0 */
-import bson from 'bson';
+import { ObjectId } from 'bson';
 import d3 from 'd3';
 import {
   assign,
@@ -12,12 +12,12 @@ import {
   defaults,
   map
 } from 'lodash';
+import { inValueRange } from 'mongodb-query-util';
 
 import $ from 'jquery';
 import moment from 'moment';
 import shared from './shared';
 import many from './many';
-import { inValueRange } from 'mongodb-query-util';
 
 require('./d3-tip')(d3);
 
@@ -36,7 +36,11 @@ function extractTimestamp(d) {
   // date object from string.
   // TODO: this could be cleaner.
   try {
-    const objectId = bson.ObjectId.createFromHexString(d);
+    // console.log('get typestamp', d.id);
+    const objectId = ObjectId(d);
+    // console.log('d', d);
+    // console.log('objectId', objectId);
+    // console.log('objectId.getTimestamp', objectId.getTimestamp);
     return objectId.getTimestamp();
   } catch (e) {
     // error does not matter here, since we know objectid creation failed and
@@ -206,9 +210,12 @@ const minicharts_d3fns_date = (appRegistry) => {
       lines.classed('half', false);
       return;
     }
+    // console.log('select from query', options.query);
+    const queryTimestamp = extractTimestamp(options.query);
     lines.each(function(d) {
-      d.inRange = inValueRange(options.query, d);
+      d.inRange = inValueRange(queryTimestamp, d);
     });
+    // console.log('done selecting');
 
     lines.classed('selected', function(d) {
       return d.inRange === 'yes';
@@ -223,6 +230,7 @@ const minicharts_d3fns_date = (appRegistry) => {
     selection.each(function(data) {
       const values = data.map(function(d) {
         const ts = extractTimestamp(d);
+        // console.log('timestampe', ts);
         return {
           label: format(ts),
           ts: ts,
@@ -230,6 +238,7 @@ const minicharts_d3fns_date = (appRegistry) => {
           count: 1
         };
       });
+      // console.log('here');
 
       // without `-1` the tooltip won't always trigger on the rightmost value
       const innerWidth = width - margin.left - margin.right - 1;
@@ -258,6 +267,9 @@ const minicharts_d3fns_date = (appRegistry) => {
           count: d.length
         };
       });
+
+      // console.log('here2');
+
 
       // group by hours
       const hourLabels = d3.range(24);
@@ -308,6 +320,8 @@ const minicharts_d3fns_date = (appRegistry) => {
       el.select('.hour')
         .attr('transform', 'translate(' + (innerWidth / (upperRatio + 1) + upperMargin) + ', 0)');
 
+      // console.log('here3');
+
       const gBrush = g.selectAll('.brush').data([0]);
       gBrush.enter().append('g')
         .attr('class', 'brush')
@@ -332,6 +346,8 @@ const minicharts_d3fns_date = (appRegistry) => {
         .on('mouseout', tip.hide)
         .on('mousedown', handleMouseDown);
 
+      // console.log('here3.5');
+
       // disabling direct onClick handler in favor of click-drag
       //   .on('click', handleClick);
 
@@ -354,6 +370,8 @@ const minicharts_d3fns_date = (appRegistry) => {
 
       // paint remaining lines in correct color
       el.selectAll('line.selectable').call(selectFromQuery);
+
+      // console.log('here3.6');
 
       const text = g.selectAll('.text')
         .data(barcodeX.domain());
@@ -400,6 +418,8 @@ const minicharts_d3fns_date = (appRegistry) => {
       weekdayContainer.call(manyDayChart);
       subcharts.push(manyDayChart);
 
+      // console.log('here4');
+
       chartWidth = innerWidth / (upperRatio + 1) * upperRatio - upperMargin;
       const hourContainer = g.select('g.hour').data([hours]);
       const manyHourChart = many(appRegistry)
@@ -416,6 +436,8 @@ const minicharts_d3fns_date = (appRegistry) => {
         });
       hourContainer.call(manyHourChart);
       subcharts.push(manyHourChart);
+
+      // console.log('here5');
     });
   }
 
@@ -450,6 +472,8 @@ const minicharts_d3fns_date = (appRegistry) => {
     tip.destroy();
     return chart;
   };
+
+  // console.log('here101');
 
   return chart;
 };

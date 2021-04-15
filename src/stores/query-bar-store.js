@@ -27,11 +27,12 @@ import {
 } from 'lodash';
 
 import { bsonEqual, hasDistinctValue } from 'mongodb-query-util';
-import QUERY_PROPERTIES from 'constants/query-properties';
+import QUERY_PROPERTIES from '../constants/query-properties';
 import {
   USER_TYPING_DEBOUNCE_MS,
   APPLY_STATE,
   DEFAULT_FILTER,
+  DEFAULT_FILTER_STRING,
   DEFAULT_PROJECT,
   DEFAULT_SORT,
   DEFAULT_SKIP,
@@ -41,7 +42,7 @@ import {
   DEFAULT_MAX_TIME_MS,
   DEFAULT_SAMPLE_SIZE,
   DEFAULT_STATE
-} from 'constants/query-bar-store';
+} from '../constants/query-bar-store';
 import configureQueryChangedStore from './query-changed-store';
 
 // import { dataServiceConnected } from './data-service';
@@ -135,7 +136,7 @@ const configureStore = (options = {}) => {
         maxTimeMS: DEFAULT_MAX_TIME_MS,
 
         // string values for the query bar input fields
-        filterString: '',
+        filterString: DEFAULT_FILTER_STRING,
         projectString: '',
         sortString: '',
         collationString: '',

@@ -58,7 +58,7 @@ const store = configureStore({
   localAppRegistry: localAppRegistry,
   serverVersion: '4.2.0',
   // namespace: 'echo.artists',
-  namespace: 'test.shipwrecks',
+  namespace: 'ships.shipwrecks',
   actions,
   fields: [
     { name: 'harry',

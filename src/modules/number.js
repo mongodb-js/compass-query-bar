@@ -8,6 +8,7 @@ import {
   sortBy,
   map
 } from 'lodash';
+
 import many from './many';
 import shared from './shared';
 

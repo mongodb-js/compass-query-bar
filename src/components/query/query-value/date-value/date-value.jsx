@@ -7,11 +7,11 @@ import 'react-datetime/css/react-datetime.css';
 import styles from './date-value.less';
 
 // const dateRegex = new RegExp('Date\(.*\)$');
-function getDateStringFromString(value) {
-  const regex = /Date\(['`"](.*)['`"]\)$/g;
-  // console.log('exec', regex.exec(value));
-  return regex.exec(value)[1];
-}
+// function getDateStringFromString(value) {
+//   const regex = /Date\(['`"](.*)['`"]\)$/g;
+//   // console.log('exec', regex.exec(value));
+//   return regex.exec(value)[1];
+// }
 
 // console.log('getdate', getDateStringFromString(
 //   'Date(\'2021-04-06T00:00:00-04:00\')'
@@ -28,7 +28,7 @@ class DateValue extends Component {
   onDateValueChange = (momentDateObject) => {
     console.log('formatted date change', momentDateObject.format());
 
-    this.props.onChangeQueryValue(`Date('${momentDateObject.format()}')`);
+    this.props.onChangeQueryValue(momentDateObject.format());
   }
 
   // renderInput( props, openCalendar, closeCalendar ) {
@@ -54,7 +54,7 @@ class DateValue extends Component {
 
     let datetimeValue;
     try {
-      datetimeValue = new Date(getDateStringFromString(queryValue));
+      datetimeValue = new Date(queryValue);
     } catch (e) {
       console.log('get date failed for string', queryValue);
       return null;

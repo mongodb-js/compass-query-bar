@@ -8,17 +8,24 @@
   display: inline-block;
   position: relative;
 
-  &:focus-within {
-    .value-picker {
-      // display: block;
-      visibility: visible;
-      pointer-events: auto;
-    }
-  }
+  // &:focus-within {
+  //   .value-picker {
+  //     // display: block;
+  //     // visibility: visible;
+  //     // pointer-events: auto;
+  //     left: 0;
+  //     top: 100%;
+  //   }
+  // }
 }
 
-.query-value-input {
+// .query-value-input {
   
+// }
+
+.query-field-options-area {
+  display: inline-block;
+  position: relative;
 }
 
 .query-value-options {
@@ -129,23 +136,50 @@
   }
 }
 
+.query-value-type {
+  display: inline-block;
+  position: relative;
+
+  width: 60px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .value-picker {
   // display: none;
   display: block;
-  visibility: hidden;
-  pointer-events: none;
+  // visibility: hidden;
+  // pointer-events: none;
   position: absolute;
   z-index: 1000;
-  top: 100%;
+  // top: 100%;
   background-color: white;
   border: 1px solid black;
+  // padding: 4px;
+
+  left: -10000px;
+  top: -10000px;
 
   min-width: 600px;
   min-height: 400px;
 
-  &:hover, &:focus, &:active, &:focus-within {
-    // display: block;
-    visibility: visible;
-    // pointer-events: ;
+  &.show-value-picker {
+    left: 0;
+    top: 100%;
   }
+
+  // &:hover, &:focus, &:active, &:focus-within {
+  //   // display: block;
+  //   // visibility: visible;
+  //   left: 0;
+  //   top: 100%;
+  //   // pointer-events: a;
+  // }
 }
+
+// .value-picker .show-value-picker {
+//   left: 0;
+//   top: 100%;
+// }

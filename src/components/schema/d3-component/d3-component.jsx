@@ -14,7 +14,7 @@ const TO_BSON_CONVERSIONS = {
   'Decimal128': (value) => bson.Decimal128.fromString(value),
   'Date': (value) => new Date(value),
   'UtcDatetime': (value) => new Date(value),
-  'ObjectId': (value) => bson.ObjectId.createFromHexString(value)
+  'ObjectId': (value) => bson.ObjectId(value)
 };
 
 /**
@@ -96,10 +96,14 @@ class D3Component extends Component {
   }
 
   _redraw() {
+    // console.log('this.props.type.values', this.props.type.values);
+
     const el = ReactDOM.findDOMNode(this.refs.container);
     this.state.chart
       .width(this.props.width)
       .height(this.props.height);
+
+    // console.log('container', el);
 
     // @todo: Durran: add the original type here.
     //

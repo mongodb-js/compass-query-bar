@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 
 import styles from './query-item.less';
 
-import QueryValue from '../query-value/query-value';
+// import BSON_TYPES from '../../../constants/schema';
+import QueryValue, {
+  // getBSONTypeNameThingFromObj,
+  isBSONType
+} from '../query-value/query-value';
 import QueryField from '../query-field/query-field';
 
 // import 'brace/ext/language_tools';
@@ -58,6 +62,7 @@ class QueryItem extends Component {
 
   static propTypes = {
     actions: PropTypes.object.isRequired,
+    // bsonType: PropTypes.string,
     localAppRegistry: PropTypes.object.isRequired,
     field: PropTypes.string.isRequired,
     onRemoveQueryItem: PropTypes.func.isRequired,
@@ -173,6 +178,8 @@ class QueryItem extends Component {
       ...this.props.value,
       [index]: newValue
     };
+    console.log('index', index, 'new value', newValue);
+    console.log('newValues', newValues);
 
     this.props.onChangeQueryItemValue(this.props.field, newValues);
   }
@@ -345,6 +352,7 @@ class QueryItem extends Component {
   render() {
     const {
       actions,
+      // bsonType,
       localAppRegistry,
       field,
       onRemoveQueryItem,
@@ -359,6 +367,22 @@ class QueryItem extends Component {
       store,
       value
     } = this.props;
+
+    // console.log('bsonType', bsonType);
+    // console.log('value', value);
+    // if (value) {
+    //   console.log('Objectkeys', Object.keys(value));
+    //   console.log('Objectvals', Object.values(value));
+    // }
+
+    const isBSONValue = isBSONType(value);
+    // console.log('isBSONValue', isBSONValue);
+    // if (isBSONValue) {
+    //   console.log('getBSONTypeNameThingFromObj', getBSONTypeNameThingFromObj(value));
+    // }
+    // if (isBSONType(value)) {
+
+    // }
 
     return (
       <div>
@@ -399,12 +423,11 @@ class QueryItem extends Component {
               store={store}
             />
             <span
-
             >
             :&nbsp;
             </span>
           </div>
-          {Array.isArray(value) && (
+          {!isBSONValue && Array.isArray(value) && (
             <Fragment>
               [&nbsp;&#123;
               <div
@@ -458,7 +481,7 @@ class QueryItem extends Component {
               ]
             </Fragment>
           )}
-          {!Array.isArray(value) && isObject(value) && (
+          {!isBSONValue && isObject(value) && !Array.isArray(value) && (
             <Fragment>
               &#123;
               <div
@@ -490,7 +513,7 @@ class QueryItem extends Component {
               &#125;
             </Fragment>
           )}
-          {!Array.isArray(value) && !isObject(value) && (
+          {(isBSONValue || (!isObject(value) && !Array.isArray(value))) && (
             <QueryValue
               // TODO: Path using path.
               actions={actions}
@@ -498,10 +521,13 @@ class QueryItem extends Component {
               path={`${field}`}
               onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
               value={value}
+              // originalValue={originalValue}
               schemaFields={schemaFields}
               schema={schema}
+              fieldName={field}
               schemaLoaded={schemaLoaded}
               store={store}
+              // bsonType={bsonType}
             />
           )}
         </div>
