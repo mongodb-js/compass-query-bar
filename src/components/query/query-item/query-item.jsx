@@ -415,6 +415,7 @@ class QueryItem extends Component {
           {/* TODO: The coordinates override here. isBSONValue && */}
           {(
             <QueryValue
+              darkMode={darkMode}
               // TODO: Path using path.
               key={`${getSomeBsonKindOfType(value)}`}
               actions={actions}
@@ -425,7 +426,8 @@ class QueryItem extends Component {
               // originalValue={originalValue}
               schemaFields={schemaFields}
               schema={schema}
-              fieldName={field}
+              // isArrayItem
+              fieldName={arrayIndex}
               schemaLoaded={schemaLoaded}
               store={store}
               // bsonType={bsonType}
@@ -617,6 +619,29 @@ class QueryItem extends Component {
           {!isBSONValue && Array.isArray(value) && this.renderArray()}
           {!isBSONValue && isObject(value) && !Array.isArray(value) && (
             <Fragment>
+              {( // TODO Hack for now, use location and geo next.
+                path.split('.').slice(-1)[0] === 'location'
+                || path.split('.').slice(-1)[0] === 'koordinaten'
+                || path.split('.').slice(-1)[0] === 'coordinates'
+              ) && (
+                <div
+                  className={styles['query-array-coord-container']}
+                >
+                  <ValuePicker
+                    darkMode={darkMode}
+                    expanded
+                    actions={actions}
+                    path={path}
+                    fieldName={path.split('.').slice(-1)[0]}
+                    value={value}
+                    schemaLoaded={schemaLoaded}
+                    localAppRegistry={localAppRegistry}
+                    onChangeQueryItemValue={onChangeQueryItemValue}
+                    schema={schema}
+                    store={store}
+                  />
+                </div>
+              )}
               &nbsp;&#123;
               <div
                 className={styles['query-object']}

@@ -402,6 +402,7 @@ class ValuePicker extends Component {
     // console.log('render?');
     console.log('expanded', expanded);
     console.log('path', path);
+    console.log('value picker for type', getBSONTypeNameThingFromObj(value));
 
     if (isBSONType(value) && getBSONTypeNameThingFromObj(value) === allTheFieldTypes.$date.id) {
       return (

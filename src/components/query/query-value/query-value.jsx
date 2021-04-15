@@ -17,69 +17,10 @@ import Button, {
   Size,
   Variant
 } from '@leafygreen-ui/button';
-// import LeftGlyph from '@leafygreen-ui/icon/dist/Care';
-
 
 import styles from './query-value.less';
 
 import ValuePicker from '../value-picker/value-picker';
-
-// import 'brace/ext/language_tools';
-// import 'mongodb-ace-mode';
-// import 'mongodb-ace-theme-query';
-
-// const dateRegex = new RegExp('Date\(.*\)$');
-// function isDate(value) {
-//   return dateRegex.test(`${value}`);
-// }
-
-/**
- * extract longitudes and latitudes, run a bounds check and return zipped
- * coordinates or false, if the bounds check fails. Bounds are [-180, 180] for
- * longitude, [-90, 90] for latitude, boundaries included.
- *
- * @api private
- *
- * @param  {Array} values  a flattened array of coordinates: [lng, lat, lng, lat, ...]
- * @return {[type]}        returns a zipped array of [[lng, lat], [lng, lat], ...]
- *                         coordinates or false if bounds check fails.
- */
-function _zipCoordinates(values) {
-  const lons = filter(values, function(val, idx) {
-    return idx % 2 === 0;
-  });
-  const lats = filter(values, function(val, idx) {
-    return idx % 2 === 1;
-  });
-  // if (min(lons) >= -180 && max(lons) <= 180 &&
-  //   min(lats) >= -90 && max(lats) <= 90) {
-  return zip(lons, lats);
-  // }
-  // return false;
-}
-
-const aaaaaa = false;
-
-function getSemanticType(type) {
-  // check if the type represents geo coordinates, if privacy settings allow
-  if (!aaaaaa || (global.hadronApp.isFeatureEnabled('enableMaps') && process.env.HADRON_ISOLATED !== 'true')) {
-    // const coords = detectCoordinates(type);
-    // console.log('type', type);
-    // console.log('is coords?', coords); coords ||
-    // TODO: Get rid of path check and look for geo json.
-    if ((type.name === 'Array' && (type.path === 'location' || type.path === 'coordinates' || type.path === 'koordinaten'))) {
-      // console.log('new values', _zipCoordinates(type.types[0].values));
-      return {
-        ...type,
-        name: 'Coordinates',
-        values: _zipCoordinates(type.types[0].values)
-      };
-      // type.name = 'Coordinates';
-      // type.values = coords;
-    }
-  }
-  return type;
-}
 
 const COMPARISON_OPERATORS = {
   '$eq': {
@@ -400,7 +341,7 @@ function getNestedDocType(types) {
   return null;
 }
 
-function getSomeBsonKindOfType(value) {
+function getSomeBsonKindOfType(value, fieldName) {
   let bsonTypeId;
   if (isBSONType(value)) {
     bsonTypeId = BSON_TYPES_INCOMPLETE[Object.keys(value)[0]].id;
@@ -409,7 +350,7 @@ function getSomeBsonKindOfType(value) {
   } else if (isObject(value) && !Array.isArray(value)) {
     // || (!isObject(value)
     bsonTypeId = allTheFieldTypes.Document.id;
-  } else if (Array.isArray(value)) {
+  } else if (isString(fieldName) && Array.isArray(value)) {
     // || (!isObject(value)
     bsonTypeId = allTheFieldTypes.Array.id;
   } else if (isString(value)) {
@@ -763,7 +704,8 @@ class QueryValue extends Component {
 
     const isBSONValue = isBSONType(value);
     // console.log('isBSONValue', isBSONValue);
-    const bsonTypeId = getSomeBsonKindOfType(value);
+    // console.log('fieldname', fieldName);
+    const bsonTypeId = getSomeBsonKindOfType(value, fieldName);
 
     // console.log('isValuePickerExpanded', isValuePickerExpanded);
 
