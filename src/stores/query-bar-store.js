@@ -44,6 +44,7 @@ import {
   DEFAULT_STATE
 } from '../constants/query-bar-store';
 import configureQueryChangedStore from './query-changed-store';
+import { addLayer, generateGeoQuery } from '../modules/geo';
 
 // import { dataServiceConnected } from './data-service';
 
@@ -122,6 +123,8 @@ const configureStore = (options = {}) => {
      * @return {Object} the initial store state.
      */
     getInitialState() {
+      this.geoLayers = {};
+
       return {
         // user-facing query properties
         filter: DEFAULT_FILTER,
@@ -664,6 +667,24 @@ const configureStore = (options = {}) => {
       this.clearValue({ field: args.field });
     },
 
+    geoLayerAdded(field, layer) {
+      this.geoLayers = addLayer(field, layer, this.geoLayers);
+      this.localAppRegistry.emit('compass:schema:geo-query', generateGeoQuery(this.geoLayers));
+    },
+
+    geoLayersEdited(field, layers) {
+      layers.eachLayer((layer) => {
+        this.geoLayerAdded(field, layer);
+      });
+    },
+
+    geoLayersDeleted(layers) {
+      layers.eachLayer((layer) => {
+        delete this.geoLayers[layer._leaflet_id];
+      });
+      this.localAppRegistry.emit('compass:schema:geo-query', generateGeoQuery(this.geoLayers));
+    },
+
     /**
      * apply the current (valid) query, and store it in `lastExecutedQuery`.
      */
@@ -702,6 +723,8 @@ const configureStore = (options = {}) => {
      *  test strategy. Same as collection-stats and collections-store.
      */
     reset() {
+      this.geoLayers = {};
+
       // if the current query is the same as the default, nothing happens
       if (isEqual(this._cloneQuery(), this._getDefaultQuery())) {
         return;

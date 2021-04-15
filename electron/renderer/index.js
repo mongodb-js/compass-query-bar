@@ -59,6 +59,7 @@ const store = configureStore({
   serverVersion: '4.2.0',
   // namespace: 'echo.artists',
   namespace: 'ships.shipwrecks',
+  // namespace: 'mongodbVSCodePlaygroundDB.sales',
   actions,
   fields: [
     { name: 'harry',

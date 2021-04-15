@@ -223,6 +223,8 @@ const minicharts_d3fns_many = (appRegistry) => {
         return !d.hasDistinct;
       });
     } else if (options.selectionType === 'range') {
+      console.log('here range');
+      console.log('query', options.query);
       bars.each(function(d) {
         d.inRange = inValueRange(options.query, d);
       });

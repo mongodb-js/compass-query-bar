@@ -10,9 +10,9 @@ const LOGICAL_QUERY_OPERATORS = {
     title: '$or',
     description: 'Perform a logical OR operation on an array of two or more <expressions> and select the document(s) that satisfy at least one of the <expressions>',
     defaultValue: [{
-      firstCondition: true
+      '': ''
     }, {
-      secondCondition: true
+      '': ''
     }]
   },
   '$and': {
@@ -20,9 +20,9 @@ const LOGICAL_QUERY_OPERATORS = {
     title: '$and',
     description: 'Performs a logical AND operation on an array of two or more <expressions> and select the document(s) that satisfy all of the <expressions>',
     defaultValue: [{
-      firstCondition: true
+      '': ''
     }, {
-      secondCondition: true
+      '': ''
     }]
   },
   '$not': {
@@ -31,7 +31,12 @@ const LOGICAL_QUERY_OPERATORS = {
   },
   '$nor': {
     id: '$nor',
-    title: '$nor'
+    title: '$nor',
+    defaultValue: [{
+      '': ''
+    }, {
+      '': ''
+    }]
   }
 };
 
@@ -292,9 +297,7 @@ class QueryField extends Component {
       let match;
       if (arrayOfFields) {
         arrayOfFields.forEach(field => {
-          // console.log('field.name === ', field.name, fieldName);
           if (field.name === fieldName) {
-            // console.log('true');
             match = field;
           }
         });
@@ -306,8 +309,8 @@ class QueryField extends Component {
     let autocompleteOptions;
     let doesntMatch = false;
 
-
     const fields = schema.fields;
+    let isInQueryArray = false;
     path.split('.').map((interiorPath, index) => {
       // console.log('check', interiorPath);
       if (doesntMatch) {
@@ -315,14 +318,6 @@ class QueryField extends Component {
       }
 
       if (index === pathDepth - 1) {
-        // type = fields[];
-        // if (!fields[])
-        // const matchingField = getMatchingField(interiorPath, fields);
-        // if (!matchingField) {
-        //   doesntMatch = true;
-        //   return;
-        // }
-
         if (fields) {
           autocompleteOptions = fields.filter(schemaField => (
             !value
@@ -337,24 +332,31 @@ class QueryField extends Component {
       }
 
       if (!doesntMatch) {
+        if (LOGICAL_QUERY_OPERATORS[interiorPath]) {
+          // const operator = LOGICAL_QUERY_OPERATORS[interiorPath];
+          // if (operator === LOGICAL_QUERY_OPERATORS.) {
+          // }
+          isInQueryArray = true;
+
+          return;
+        }
+
+        if (isInQueryArray) {
+          isInQueryArray = false;
+          return;
+        }
+
         const matchingField = getMatchingField(interiorPath, fields);
         if (!matchingField) {
           doesntMatch = true;
           return;
         }
-
-        // TODO: Nested fields.
-        // fields =
       }
     });
 
-    // const autocompleteOptions = schemaFields.filter(schemaField => (
-    //   !value
-    //   || (
-    //     schemaField.value.toLowerCase().includes(value.toLowerCase())
-    //     && schemaField.value !== value
-    //   )
-    // ));
+    console.log('fields', fields);
+    console.log('autocompleteOptions', autocompleteOptions);
+    console.log('path', path);
 
     if (!autocompleteOptions || autocompleteOptions.length === 0) {
       return;
@@ -414,44 +416,6 @@ class QueryField extends Component {
       >
 
         <div className={styles['query-field-input-area']}>
-          {/* <Autocomplete
-            className={styles['query-field-input']}
-            getItemValue={(item) => item.value}
-            items={schemaFields}
-            renderItem={(item, isHighlighted) =>
-              (<div
-                style={{
-                  zIndex: 1000000,
-                  background: isHighlighted
-                    ? 'lightgray'
-                    : 'white'
-                }}
-              >
-                {item.name}
-              </div>)
-            }
-            value={value}
-            onChange={(e) => {
-              onRenameQueryItem(value, e.target.value);
-            }}
-            onSelect={(val) => {
-              onRenameQueryItem(value, val);
-            }}
-            // menuStyle={{
-            //   zIndex: 100000,
-            //   borderRadius: '3px',
-            //   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-            //   background: 'rgba(255, 255, 255, 0.9)',
-            //   padding: '2px 0',
-            //   fontSize: '90%',
-            //   position: 'absolute',
-            //   top: '90%',
-            //   left: 0,
-            //   // overflow: 'scro',
-            //   maxHeight: '50%',
-            //   // height: 'auto'
-            // }}
-          /> */}
           <input
             type="text"
             className={styles['query-field-input']}

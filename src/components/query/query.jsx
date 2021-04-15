@@ -107,12 +107,12 @@ class Query extends Component {
   constructor(props) {
     super(props);
 
-    const {
-      value
-    } = this.props;
+    // const {
+    //   value
+    // } = this.props;
 
     this.state = {
-      query: parseQueryFromStore(value),
+      // query: parseQueryFromStore(value),
       schemaLoaded: false,
       schema: {}
     };
@@ -220,12 +220,12 @@ class Query extends Component {
   // }
 
   onChangeQuery = (queryObj) => {
-    console.log('query object before stringing', queryObj);
+    // console.log('query object before stringing', queryObj);
     let newCode = '';
     try {
       // console.log('serialized:', EJSON.serialize(queryObj));
       newCode = EJSON.stringify(queryObj);
-      console.log('after stringing', newCode);
+      // console.log('after stringing', newCode);
       // newCode = queryParser.stringify(queryObj);
       // console.log('stringified ejson')
       // newCode = JSON.stringify(queryObj);
@@ -243,82 +243,84 @@ class Query extends Component {
   onChangeQueryItemValue = (index, newValue) => {
     console.log('onChangeQueryItemValue', index, newValue);
     const newQuery = {
-      ...this.state.query,
+      // ...this.state.query,
+      ...parseQueryFromStore(this.props.value),
       [index]: newValue
     };
     console.log('new q after that', newQuery);
 
-    this.setState({
-      query: newQuery
-    });
+    // this.setState({
+    //   query: newQuery
+    // });
 
     this.onChangeQuery(newQuery);
   }
 
   renameAndUpdateQueryItem = (currentIndex, newIndex, newValue) => {
     const newQuery = replaceKeyInSameSpot(
-      this.state.query,
+      parseQueryFromStore(this.props.value),
       currentIndex,
       newIndex,
       newValue
     );
 
-    this.setState({
-      query: newQuery
-    });
+    // this.setState({
+    //   query: newQuery
+    // });
 
     this.onChangeQuery(newQuery);
   }
 
   onRenameQueryItem = (currentIndex, newIndex) => {
     const newQuery = replaceKeyInSameSpot(
-      this.state.query,
+      parseQueryFromStore(this.props.value),
       currentIndex,
       newIndex,
-      this.state.query[currentIndex]
+      parseQueryFromStore(this.props.value)[currentIndex]
     );
 
-    this.setState({
-      query: newQuery
-    });
+    // this.setState({
+    //   query: newQuery
+    // });
 
     this.onChangeQuery(newQuery);
   }
 
   onRemoveQueryItem = (index) => {
     const newQuery = {
-      ...this.state.query
+      ...parseQueryFromStore(this.props.value)
     };
 
     delete newQuery[index];
 
-    this.setState({
-      query: newQuery
-    });
+    // this.setState({
+    //   query: newQuery
+    // });
 
     this.onChangeQuery(newQuery);
   }
 
   onAddQueryItem = () => {
+    const query = parseQueryFromStore(this.props.value);
     let newFieldName = '';
-    if (this.state.query[newFieldName]) {
+    if (query[newFieldName]) {
       let counter = 1;
-      while (!!this.state.query[`field ${counter}`]) {
+      while (!!query[`field ${counter}`]) {
         counter++;
       }
       newFieldName = `field ${counter}`;
     }
 
     const newQuery = {
-      ...this.state.query,
+      ...query,
       [newFieldName]: ''
     };
 
     // TODO: Check that new field doesn't exist.
 
-    this.setState({
-      query: newQuery
-    });
+    // this.setState({
+    //   query: newQuery
+    // });
 
     this.onChangeQuery(newQuery);
   }

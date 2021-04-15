@@ -140,10 +140,11 @@
   display: inline-block;
   position: relative;
 
-  width: 60px;
+  width: 74px;
 
   &:hover {
     cursor: pointer;
+    color: #666;
   }
 }
 
@@ -162,12 +163,22 @@
   left: -10000px;
   top: -10000px;
 
-  min-width: 600px;
-  min-height: 400px;
+  text-align: center;
 
   &.show-value-picker {
     left: 0;
     top: 100%;
+  }
+
+  .empty-value-picker {
+    padding: 10px;
+    min-width: 200px;
+  }
+
+  .value-picker-chart {
+    width: 600px;
+    height: 400px;
+    position: relative;
   }
 
   // &:hover, &:focus, &:active, &:focus-within {

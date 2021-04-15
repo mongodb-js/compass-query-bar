@@ -344,11 +344,107 @@ class QueryItem extends Component {
     this.props.onChangeQueryItemValue(this.props.field, newValue);
   }
 
-  /**
-   * Render the editor.
-   *
-   * @returns {Component} The component.
-   */
+  renderArrayItem = (expression, arrayIndex) => {
+    const {
+      actions,
+      // bsonType,
+      localAppRegistry,
+      field,
+      path,
+      schemaFields,
+      schema,
+      schemaLoaded,
+      store,
+      value
+    } = this.props;
+
+    const isBSONValue = isBSONType(value);
+    // if () {
+
+    // }
+
+    return (
+      <div
+        className={styles['query-array-item']}
+        key={`${path}-${arrayIndex}`}
+      >
+        {/* TODO: The coordinates override here. isBSONValue && */}
+        {(
+          <QueryValue
+            // TODO: Path using path.
+            actions={actions}
+            localAppRegistry={localAppRegistry}
+            path={`${field}.${arrayIndex}`}
+            onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
+            value={value}
+            // originalValue={originalValue}
+            schemaFields={schemaFields}
+            schema={schema}
+            fieldName={field}
+            schemaLoaded={schemaLoaded}
+            store={store}
+            // bsonType={bsonType}
+          />
+        )}
+        {!isBSONValue && isObject(expression) && Object.entries(expression).map(
+          ([nestedField, nestedValue], nestedIndex) => (
+            <QueryItem
+              actions={actions}
+              localAppRegistry={localAppRegistry}
+              // key={`${field}-${index}`}
+              path={`${field}.${arrayIndex}.${nestedField}`}
+              field={nestedField}
+              value={nestedValue}
+              key={`${path}-${arrayIndex}-${nestedIndex}`}
+              // queryItem={query}
+              schema={schema}
+              schemaLoaded={schemaLoaded}
+              onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
+              onRemoveQueryItem={(fieldNameToDel) => this.onRemoveArrayQueryItem(arrayIndex, fieldNameToDel)}
+              onRenameQueryItem={(currentField, newField) => this.onRenameArrayQueryItem(arrayIndex, currentField, newField)}
+              onAddQueryItem={() => this.onAddArrayQueryItem(arrayIndex)}
+              renameAndUpdateValue={(currentIndex, newIndex, newVal) => this.arrayRenameAndUpdateValue(arrayIndex, currentIndex, newIndex, newVal)}
+              schemaFields={schemaFields}
+              store={store}
+            />
+          )
+        )}
+      </div>
+    );
+  }
+
+
+  renderArray() {
+    const {
+      value
+    } = this.props;
+
+    return (
+      <Fragment>
+        [&nbsp;{value.length > 0 && value[0] && !isBSONType(value[0]) && isObject(value[0]) && (
+          <Fragment>
+            &#123;
+          </Fragment>
+        )}
+        <div
+          className={styles['query-array']}
+        >
+          {value.map(
+            (expression, arrayIndex) => this.renderArrayItem(expression, arrayIndex)
+          )}
+        </div>
+        &#125;&nbsp;
+        <button
+          onClick={() => this.onAddQueryItem()}
+        >
+          +
+        </button>
+        &nbsp;
+        ]
+      </Fragment>
+    );
+  }
+
   render() {
     const {
       actions,
@@ -427,63 +523,27 @@ class QueryItem extends Component {
             :&nbsp;
             </span>
           </div>
-          {!isBSONValue && Array.isArray(value) && (
-            <Fragment>
-              [&nbsp;&#123;
-              <div
-                className={styles['query-array']}
-              >
-                {value.map(
-                  (expresssion, arrayIndex) => (
-                    <div
-                      className={styles['query-array-item']}
-                      key={`${path}-${arrayIndex}`}
-                    >
-                      {/* {arrayIndex > 0 && (
-                        <span>
-                          ,
-                        </span>
-                      )} */}
-                      {Object.entries(expresssion).map(
-                        ([nestedField, nestedValue], nestedIndex) => (
-                          <QueryItem
-                            actions={actions}
-                            localAppRegistry={localAppRegistry}
-                            // key={`${field}-${index}`}
-                            path={`${field}.${arrayIndex}.${nestedField}`}
-                            field={nestedField}
-                            value={nestedValue}
-                            key={`${path}-${arrayIndex}-${nestedIndex}`}
-                            // queryItem={query}
-                            schema={schema}
-                            schemaLoaded={schemaLoaded}
-                            onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
-                            onRemoveQueryItem={(fieldNameToDel) => this.onRemoveArrayQueryItem(arrayIndex, fieldNameToDel)}
-                            onRenameQueryItem={(currentField, newField) => this.onRenameArrayQueryItem(arrayIndex, currentField, newField)}
-                            onAddQueryItem={() => this.onAddArrayQueryItem(arrayIndex)}
-                            renameAndUpdateValue={(currentIndex, newIndex, newVal) => this.arrayRenameAndUpdateValue(arrayIndex, currentIndex, newIndex, newVal)}
-                            schemaFields={schemaFields}
-                            store={store}
-                          />
-                        )
-                      )}
-                    </div>
-                  )
-                )}
-              </div>
-              &#125;&nbsp;
-              <button
-                onClick={() => this.onAddQueryItem()}
-              >
-                +
-              </button>
-              &nbsp;
-              ]
-            </Fragment>
+          {(
+            <QueryValue
+              // TODO: Path using path.
+              actions={actions}
+              localAppRegistry={localAppRegistry}
+              path={`${field}`}
+              onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
+              value={value}
+              // originalValue={originalValue}
+              schemaFields={schemaFields}
+              schema={schema}
+              fieldName={field}
+              schemaLoaded={schemaLoaded}
+              store={store}
+              // bsonType={bsonType}
+            />
           )}
+          {!isBSONValue && Array.isArray(value) && this.renderArray()}
           {!isBSONValue && isObject(value) && !Array.isArray(value) && (
             <Fragment>
-              &#123;
+              &nbsp;&#123;
               <div
                 className={styles['query-object']}
               >
@@ -509,26 +569,20 @@ class QueryItem extends Component {
                     />
                   )
                 )}
+                {Object.entries(value).length === 0 && (
+                  <div
+                    // className={styles['query-object']}
+                  >
+                    <button
+                      onClick={() => this.onAddQueryItem()}
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
               </div>
               &#125;
             </Fragment>
-          )}
-          {(isBSONValue || (!isObject(value) && !Array.isArray(value))) && (
-            <QueryValue
-              // TODO: Path using path.
-              actions={actions}
-              localAppRegistry={localAppRegistry}
-              path={`${field}`}
-              onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
-              value={value}
-              // originalValue={originalValue}
-              schemaFields={schemaFields}
-              schema={schema}
-              fieldName={field}
-              schemaLoaded={schemaLoaded}
-              store={store}
-              // bsonType={bsonType}
-            />
           )}
         </div>
       </div>

@@ -54,6 +54,10 @@ const configureActions = () => {
      */
     setDistinctValues: { sync: true },
 
+    geoLayerAdded: { sync: true },
+    geoLayersEdited: { sync: true },
+    geoLayersDeleted: { sync: true },
+
     /* Range actions:
      * support single values (equality clause) and ranges ($gt(e) / $lt(e) clauses).
      */

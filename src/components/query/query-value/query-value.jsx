@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 // import { QueryAutoCompleter } from 'mongodb-ace-autocompleter';
 // import FontAwesome from 'react-fontawesome';
 // import { EJSON } from 'bson';
-import { find } from 'lodash';
+import { find, zip, min, max, filter } from 'lodash';
+// import detectCoordinates from 'detect-coordinates';
 
 // import 'brace/ext/language_tools';
 // import 'mongodb-ace-mode';
@@ -15,9 +16,34 @@ import DateValue from './date-value/date-value';
 import Minichart from '../../schema/minichart';
 import { isString } from 'lodash';
 
-const dateRegex = new RegExp('Date\(.*\)$');
-function isDate(value) {
-  return dateRegex.test(`${value}`);
+// const dateRegex = new RegExp('Date\(.*\)$');
+// function isDate(value) {
+//   return dateRegex.test(`${value}`);
+// }
+
+/**
+ * extract longitudes and latitudes, run a bounds check and return zipped
+ * coordinates or false, if the bounds check fails. Bounds are [-180, 180] for
+ * longitude, [-90, 90] for latitude, boundaries included.
+ *
+ * @api private
+ *
+ * @param  {Array} values  a flattened array of coordinates: [lng, lat, lng, lat, ...]
+ * @return {[type]}        returns a zipped array of [[lng, lat], [lng, lat], ...]
+ *                         coordinates or false if bounds check fails.
+ */
+function _zipCoordinates(values) {
+  const lons = filter(values, function(val, idx) {
+    return idx % 2 === 0;
+  });
+  const lats = filter(values, function(val, idx) {
+    return idx % 2 === 1;
+  });
+  // if (min(lons) >= -180 && max(lons) <= 180 &&
+  //   min(lats) >= -90 && max(lats) <= 90) {
+  return zip(lons, lats);
+  // }
+  // return false;
 }
 
 // const LOGICAL_QUERY_OPERATORS = {
@@ -40,6 +66,28 @@ function isDate(value) {
 //     title: '$nor'
 //   }
 // };
+
+const aaaaaa = false;
+
+function getSemanticType(type) {
+  // check if the type represents geo coordinates, if privacy settings allow
+  if (!aaaaaa || (global.hadronApp.isFeatureEnabled('enableMaps') && process.env.HADRON_ISOLATED !== 'true')) {
+    // const coords = detectCoordinates(type);
+    // console.log('type', type);
+    // console.log('is coords?', coords); coords ||
+    if ((type.name === 'Array' && (type.path === 'coordinates' || type.path === 'koordinaten'))) {
+      // console.log('new values', _zipCoordinates(type.types[0].values));
+      return {
+        ...type,
+        name: 'Coordinates',
+        values: _zipCoordinates(type.types[0].values)
+      };
+      // type.name = 'Coordinates';
+      // type.values = coords;
+    }
+  }
+  return type;
+}
 
 const COMPARISON_OPERATORS = {
   '$eq': {
@@ -193,64 +241,65 @@ const valueTypeOptions = {
   // Binary, array, $type, $exists, etc.
 };
 
-const BSON_THINGS = {
+export const BSON_TYPES_INCOMPLETE = {
   '$oid': {
     id: '$oid',
-    title: 'ObjectId',
+    newTitle: 'ObjectId',
+    title: 'ObjectID',
     // convert: (val) => ({
     //   $oid: `${val}`
     // }),
     defaultValue: {
-      $oid: '578f6fa2df35c7fbdbaed8e0'
+      '$oid': '578f6fa2df35c7fbdbaed8e0'
     }
   },
   '$date': {
     id: '$date',
     title: 'Date',
     defaultValue: {
-      $date: new Date()
+      '$date': new Date()
     }
   },
   '$numberDouble': {
     id: '$numberDouble',
     title: 'Double',
     defaultValue: {
-      $numberDouble: '0'
+      '$numberDouble': '0'
     }
   },
   '$numberLong': {
     id: '$numberLong',
     title: 'Long',
     defaultValue: {
-      $numberLong: '0'
+      '$numberLong': '0'
     }
   },
   '$numberInt': {
     id: '$numberInt',
     title: 'Int 32',
     defaultValue: {
-      $numberInt: '22'
+      '$numberInt': '22'
     }
   },
   '$regularExpression': {
     id: '$regularExpression',
     title: 'regex',
     defaultValue: {
-      $regex: '//g'
+      '$regularExpression': '//g'
     }
   },
   '$code': {
     id: '$code',
     title: 'Code',
     defaultValue: {
-      $code: ''
+      '$code': ''
     }
   },
   '$binary': {
     id: '$binary',
     title: 'Binary Data',
     defaultValue: {
-      $binary: {
+      '$binary': {
         base64: '',
         subType: '00'
       }
@@ -260,15 +309,17 @@ const BSON_THINGS = {
     id: '$timestamp',
     title: 'Timestamp',
     defaultValue: {
-      t: 0,
-      i: 1
+      '$timestamp': {
+        t: 0,
+        i: 1
+      }
     }
   },
   '$uuid': {
     id: '$uuid',
     title: 'uuid',
     defaultValue: {
-      $uuid: ''
+      '$uuid': ''
     }
   },
 };
@@ -284,9 +335,16 @@ const allTheFieldTypes = {
     title: 'Number',
     defaultValue: 0
   },
-  Object: {
-    id: 'Object',
-    title: 'Object',
+  // Object: {
+  //   id: 'Object',
+  //   title: 'Object',
+  //   defaultValue: {
+  //     '': ''
+  //   }
+  // },
+  Document: {
+    id: 'Document',
+    title: 'Document',
     defaultValue: {
       '': ''
     }
@@ -296,23 +354,12 @@ const allTheFieldTypes = {
     title: 'Array',
     defaultValue: ['']
   },
-  ...BSON_THINGS
+  ...BSON_TYPES_INCOMPLETE
 };
 
 // TODO: There are more of these and could probably be pulled from somewhere.
-const BSON_JS_TYPE_NAMES = Object.keys(BSON_THINGS);
-// [
-//   '$oid',
-//   '$date',
-//   '$numberDouble',
-//   '$numberLong',
-//   '$numberInt',
-//   '$regularExpression',
-//   '$code',
-//   '$binary',
-//   '$timestamp',
-//   '$uuid'
-// ];
+const BSON_JS_TYPE_NAMES = Object.keys(BSON_TYPES_INCOMPLETE);
+// const BSON_JSON_SCHEMA_MAP = Object.value(BSON_TYPES_INCOMPLETE).map((bsonType) => bsonType.title);
 
 function isObject(value) {
   return typeof value === 'object' && value !== null;
@@ -326,9 +373,16 @@ export function isBSONType(value) {
   if (Object.keys(value).length !== 1) {
     return false;
   }
-  const bsonType = Object.keys(value)[0];
+  const possibleBsonType = Object.keys(value)[0];
 
-  return BSON_JS_TYPE_NAMES.includes(bsonType);
+  return BSON_JS_TYPE_NAMES.includes(possibleBsonType)
+    || (
+      Object.values(
+        BSON_TYPES_INCOMPLETE
+      ).filter(
+        (bsonType) => bsonType.title === possibleBsonType
+      ).length > 0
+    );
 }
 
 export function getBSONTypeNameThingFromObj(value) {
@@ -352,6 +406,28 @@ function getNestedDocType(types) {
     return find(arrType.types, { name: 'Document' });
   }
   return null;
+}
+
+function getSomeBsonKindOfType(value) {
+  let bsonTypeId;
+  if (isBSONType(value)) {
+    bsonTypeId = BSON_TYPES_INCOMPLETE[Object.keys(value)[0]].id;
+    // getBSONTypeNameThingFromObj(value);
+    // console.log('getBSONTypeNameThingFromObj', bsonTypeId);
+  } else if (isObject(value) && !Array.isArray(value)) {
+    // || (!isObject(value)
+    bsonTypeId = allTheFieldTypes.Document.id;
+  } else if (Array.isArray(value)) {
+    // || (!isObject(value)
+    bsonTypeId = allTheFieldTypes.Array.id;
+  } else if (isString(value)) {
+    bsonTypeId = allTheFieldTypes.String.id;
+  } else {
+    bsonTypeId = allTheFieldTypes.Number.id;
+  }
+
+  return bsonTypeId;
+  // Where is boolean
 }
 
 class QueryValue extends Component {
@@ -463,6 +539,10 @@ class QueryValue extends Component {
       this.setState({
         expanded: false
       });
+      console.log('default value', valueOption.defaultValue
+        ? valueOption.defaultValue
+        : valueOption.id
+      );
       this.props.onChangeQueryItemValue(
         valueOption.defaultValue
           ? valueOption.defaultValue
@@ -477,9 +557,12 @@ class QueryValue extends Component {
     console.log('set field type to', newFieldTypeId);
 
     if (newFieldTypeId) {
+      console.log('allTheFieldTypes', allTheFieldTypes);
       this.setState({
         isTypePickerExpanded: false
       });
+      console.log('default value22', allTheFieldTypes[newFieldTypeId].defaultValue
+      );
       this.props.onChangeQueryItemValue(
         allTheFieldTypes[newFieldTypeId].defaultValue
       );
@@ -575,7 +658,7 @@ class QueryValue extends Component {
                   fieldType.id
                 )}
               >
-                {fieldType.title}
+                {fieldType.newTitle || fieldType.title}
               </a>
             </li>
           )
@@ -645,16 +728,13 @@ class QueryValue extends Component {
     let type;
     let types;
     const pathDepth = this.props.path.split('.').length;
-    // for (let i = 0; i < pathDepth; i++) {
-
-    // }
     function getMatchingField(fieldNameToMatch, arrayOfFields) {
       let match;
       if (arrayOfFields) {
         arrayOfFields.forEach(field => {
-          // console.log('field.name === ', field.name, fieldName);
           if (field.name === fieldNameToMatch) {
-            // console.log('true');
+            match = field;
+          } else if (field.title === fieldNameToMatch) {
             match = field;
           }
         });
@@ -665,27 +745,39 @@ class QueryValue extends Component {
 
     let doesntMatch = false;
     this.props.path.split('.').map((interiorPath, index) => {
-      // console.log('check', interiorPath);
       if (doesntMatch) {
         return;
       }
 
+      console.log('1', doesntMatch);
+      console.log('interiorPath', interiorPath);
+
+
       if (index === pathDepth - 1) {
-        // type = fields[];
-        // if (!fields[])
         const matchingField = getMatchingField(interiorPath, fields);
         if (!matchingField) {
           doesntMatch = true;
           return;
         }
 
-        // console.log('matches', matchingField);
 
-        types = matchingField.types;
-        // types = undefined;
-        // type = matchingField;// .type;
         if (matchingField.types.length > 0) {
-          type = matchingField.types[0];
+          types = matchingField.types;
+          // type = matchingField.types;
+          const activeType = getSomeBsonKindOfType(value);
+          matchingField.types.forEach((matchingFieldType) => {
+            console.log('is matchingFieldType', matchingFieldType, activeType);
+            console.log('matching?', matchingFieldType.name, BSON_TYPES_INCOMPLETE[activeType]);
+            if (matchingFieldType.name === activeType || matchingFieldType.name === BSON_TYPES_INCOMPLETE[activeType].title) {
+              // type = ;
+              type = getSemanticType(matchingFieldType);
+            }
+          });
+          // console.log('getSemanticType', type);
+        }
+
+        if (!type) {
+          doesntMatch = true;
         }
 
         return;
@@ -702,42 +794,38 @@ class QueryValue extends Component {
       }
     });
 
-    // console.log('schema at value', schema);
-    // console.log('path', this.props.path);
-    // const type = schema
-
-    if (doesntMatch) {
-      console.log('no type suggestion found for', this.props.path);
-      return;
-    }
-
-    // console.log(this.props.path, 'type', type);
-
-
-    console.log('render for path value', path, value);
+    // if (doesntMatch) {
+    //   // console.log('no type suggestion found for', this.props.path);
+    //   return;
+    // }
 
     return (
       <div
         className={`${styles['value-picker']} ${isValuePickerExpanded ? styles['show-value-picker'] : ''}`}
       >
-        Minichart V
         {doesntMatch && (
-          <div>
+          <div
+            className={styles['empty-value-picker']}
+          >
             <em>
-            No suggestions found.
+              No suggestions found.
             </em>
           </div>
         )}
         {!doesntMatch && (
-          <Minichart
-            fieldName={this.props.path}
-            // TODO: Schema pass this type.
-            type={type} // {activeType}
-            nestedDocType={getNestedDocType(types)} // nestedDocType
-            actions={this.props.actions}
-            localAppRegistry={this.props.localAppRegistry}
-            store={store}
-          />
+          <div
+            className={styles['value-picker-chart']}
+          >
+            <Minichart
+              fieldName={this.props.path}
+              // TODO: Schema pass this type.
+              type={type} // {activeType}
+              nestedDocType={getNestedDocType(types)} // nestedDocType
+              actions={this.props.actions}
+              localAppRegistry={this.props.localAppRegistry}
+              store={store}
+            />
+          </div>
         )}
       </div>
     );
@@ -792,6 +880,7 @@ class QueryValue extends Component {
     // }
   }
 
+  // eslint-disable-next-line complexity
   render() {
     const {
       expanded,
@@ -814,11 +903,7 @@ class QueryValue extends Component {
 
     const isBSONValue = isBSONType(value);
     // console.log('isBSONValue', isBSONValue);
-    let bsonTypeId;
-    if (isBSONValue) {
-      bsonTypeId = getBSONTypeNameThingFromObj(value);
-      // console.log('getBSONTypeNameThingFromObj', bsonTypeId);
-    }
+    const bsonTypeId = getSomeBsonKindOfType(value);
 
     // console.log('value', value);
     // console.log('bsonTypeId', bsonTypeId);
@@ -834,27 +919,32 @@ class QueryValue extends Component {
             tabIndex={0}
             onClick={() => { this.setState({ isTypePickerExpanded: !isTypePickerExpanded }); }}
           >
-            {isBSONValue && BSON_THINGS[bsonTypeId].title}
-            {!isBSONValue && (
+            {allTheFieldTypes[bsonTypeId].newTitle || allTheFieldTypes[bsonTypeId].title}
+            {/* {} */}
+            {/* {!isBSONValue && (
               isString(value)
                 ? 'String'
                 : 'Number'
-            )}
+            )} */}
             {isTypePickerExpanded && this.renderTypePicker()}
           </div>
-          <div
-            className={styles['query-value-input-area']}
-            ref={this.valuePickerRef}
-          >
-            <input
-              type="text"
-              className={styles['query-value-input']}
-              value={isBSONValue ? value[bsonTypeId] : value}
-              onFocus={() => {
-                console.log('on focus');
-                this.setState({ isValuePickerExpanded: true });
-              }}
-              onChange={e => {
+          {!(
+            allTheFieldTypes[bsonTypeId].id === allTheFieldTypes.Document.id
+            || allTheFieldTypes[bsonTypeId].id === allTheFieldTypes.Array.id
+          ) && (
+            <div
+              className={styles['query-value-input-area']}
+              ref={this.valuePickerRef}
+            >
+              <input
+                type="text"
+                className={styles['query-value-input']}
+                value={isBSONValue ? value[bsonTypeId] : value}
+                onFocus={() => {
+                // console.log('on focus');
+                  this.setState({ isValuePickerExpanded: true });
+                }}
+                onChange={e => {
                 // console.log('!!!!1 w/', {
                 //   _bsonType: bsonType,
                 //   value: e.target.value
@@ -866,24 +956,25 @@ class QueryValue extends Component {
                 //   // value: e.target.value
                 // };
 
-                if (isBSONValue) {
-                  onChangeQueryItemValue({
-                    [bsonTypeId]: e.target.value
-                  });
-                  return;
-                }
+                  if (isBSONValue) {
+                    onChangeQueryItemValue({
+                      [bsonTypeId]: e.target.value
+                    });
+                    return;
+                  }
 
-                if (isString(value)) {
-                  onChangeQueryItemValue(e.target.value);
-                  return;
-                }
+                  if (isString(value)) {
+                    onChangeQueryItemValue(e.target.value);
+                    return;
+                  }
 
-                onChangeQueryItemValue(Number(e.target.value));
-              }}
-            />
+                  onChangeQueryItemValue(Number(e.target.value));
+                }}
+              />
 
-            {!expanded && !isTypePickerExpanded && this.renderValuePicker()}
-          </div>
+              {!expanded && !isTypePickerExpanded && this.renderValuePicker()}
+            </div>
+          )}
 
           <div className={styles['query-field-options-area']}>
             <button

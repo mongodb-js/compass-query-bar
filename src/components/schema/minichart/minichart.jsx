@@ -99,6 +99,8 @@ class MiniChart extends Component {
 
     // console.log('fieldNamefieldNamefieldName', fieldName);
 
+    console.log('typeName', typeName);
+
     if (includes([ CONSTANTS.STRING, CONSTANTS.NUMBER ], typeName) && !hasDuplicates) {
       // console.log('minichart');
       return (
