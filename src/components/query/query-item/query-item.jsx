@@ -1,14 +1,19 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import Plus from '@leafygreen-ui/icon/dist/Plus';
+import X from '@leafygreen-ui/icon/dist/X';
+import IconButton from '@leafygreen-ui/icon-button';
 
 import styles from './query-item.less';
 
 // import BSON_TYPES from '../../../constants/schema';
 import QueryValue, {
   // getBSONTypeNameThingFromObj,
-  isBSONType
+  isBSONType,
+  BSON_THINGS
 } from '../query-value/query-value';
 import QueryField from '../query-field/query-field';
+import ValuePicker from '../value-picker/value-picker';
 
 // import 'brace/ext/language_tools';
 // import 'mongodb-ace-mode';
@@ -61,6 +66,7 @@ class QueryItem extends Component {
   static displayName = 'QueryItem';
 
   static propTypes = {
+    darkMode: PropTypes.bool,
     actions: PropTypes.object.isRequired,
     // bsonType: PropTypes.string,
     localAppRegistry: PropTypes.object.isRequired,
@@ -347,8 +353,10 @@ class QueryItem extends Component {
   renderArrayItem = (expression, arrayIndex) => {
     const {
       actions,
+      darkMode,
       // bsonType,
       localAppRegistry,
+      onChangeQueryItemValue,
       field,
       path,
       schemaFields,
@@ -363,52 +371,86 @@ class QueryItem extends Component {
 
     // }
 
+
+    // path.split('.').slice(-1)[0]
+
+    // console.log('path.slice(-1)[0]', path.split('.').slice(-1)[0]);
+
     return (
       <div
-        className={styles['query-array-item']}
-        key={`${path}-${arrayIndex}`}
+        className={styles['query-array-items-container']}
       >
-        {/* TODO: The coordinates override here. isBSONValue && */}
-        {(
-          <QueryValue
-            // TODO: Path using path.
-            actions={actions}
-            localAppRegistry={localAppRegistry}
-            path={`${field}.${arrayIndex}`}
-            onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
-            value={value}
-            // originalValue={originalValue}
-            schemaFields={schemaFields}
-            schema={schema}
-            fieldName={field}
-            schemaLoaded={schemaLoaded}
-            store={store}
-            // bsonType={bsonType}
-          />
-        )}
-        {!isBSONValue && isObject(expression) && Object.entries(expression).map(
-          ([nestedField, nestedValue], nestedIndex) => (
-            <QueryItem
+        {( // TODO Hack for now, use location and geo next.
+          path.split('.').slice(-1)[0] === 'location'
+          || path.split('.').slice(-1)[0] === 'koordinaten'
+          || path.split('.').slice(-1)[0] === 'coordinates'
+        ) && (
+          <div>
+            <ValuePicker
+              darkMode={darkMode}
+              expanded
               actions={actions}
-              localAppRegistry={localAppRegistry}
-              // key={`${field}-${index}`}
-              path={`${field}.${arrayIndex}.${nestedField}`}
-              field={nestedField}
-              value={nestedValue}
-              key={`${path}-${arrayIndex}-${nestedIndex}`}
-              // queryItem={query}
-              schema={schema}
+              path={path}
+              fieldName={'aaaaaaaaaaa'}
+              value={value}
               schemaLoaded={schemaLoaded}
-              onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
-              onRemoveQueryItem={(fieldNameToDel) => this.onRemoveArrayQueryItem(arrayIndex, fieldNameToDel)}
-              onRenameQueryItem={(currentField, newField) => this.onRenameArrayQueryItem(arrayIndex, currentField, newField)}
-              onAddQueryItem={() => this.onAddArrayQueryItem(arrayIndex)}
-              renameAndUpdateValue={(currentIndex, newIndex, newVal) => this.arrayRenameAndUpdateValue(arrayIndex, currentIndex, newIndex, newVal)}
-              schemaFields={schemaFields}
+              localAppRegistry={localAppRegistry}
+              onChangeQueryItemValue={onChangeQueryItemValue}
+              schema={schema}
               store={store}
             />
-          )
+          </div>
         )}
+        <div
+          className={styles['query-array-item']}
+          key={`${path}-${arrayIndex}`}
+        >
+          {/* {(!isBSONValue && ) && {
+
+          }} */}
+          {/* TODO: The coordinates override here. isBSONValue && */}
+          {(
+            <QueryValue
+              // TODO: Path using path.
+              actions={actions}
+              localAppRegistry={localAppRegistry}
+              path={`${field}.${arrayIndex}`}
+              onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
+              value={value}
+              // originalValue={originalValue}
+              schemaFields={schemaFields}
+              schema={schema}
+              fieldName={field}
+              schemaLoaded={schemaLoaded}
+              store={store}
+              // bsonType={bsonType}
+            />
+          )}
+          {!isBSONValue && isObject(expression) && Object.entries(expression).map(
+            ([nestedField, nestedValue], nestedIndex) => (
+              <QueryItem
+                darkMode={darkMode}
+                actions={actions}
+                localAppRegistry={localAppRegistry}
+                // key={`${field}-${index}`}
+                path={`${field}.${arrayIndex}.${nestedField}`}
+                field={nestedField}
+                value={nestedValue}
+                key={`${path}-${arrayIndex}-${nestedIndex}`}
+                // queryItem={query}
+                schema={schema}
+                schemaLoaded={schemaLoaded}
+                onChangeQueryItemValue={(fieldToUpdate, newValue) => this.onChangeArrayQueryItemValue(arrayIndex, fieldToUpdate, newValue)}
+                onRemoveQueryItem={(fieldNameToDel) => this.onRemoveArrayQueryItem(arrayIndex, fieldNameToDel)}
+                onRenameQueryItem={(currentField, newField) => this.onRenameArrayQueryItem(arrayIndex, currentField, newField)}
+                onAddQueryItem={() => this.onAddArrayQueryItem(arrayIndex)}
+                renameAndUpdateValue={(currentIndex, newIndex, newVal) => this.arrayRenameAndUpdateValue(arrayIndex, currentIndex, newIndex, newVal)}
+                schemaFields={schemaFields}
+                store={store}
+              />
+            )
+          )}
+        </div>
       </div>
     );
   }
@@ -434,11 +476,17 @@ class QueryItem extends Component {
           )}
         </div>
         &#125;&nbsp;
-        <button
+        {/* <button
+          onClick={() => this.onAddQueryItem()}
+        > */}
+        <IconButton
+          darkMode
+          aria-labelledby="Add item"
           onClick={() => this.onAddQueryItem()}
         >
-          +
-        </button>
+          <Plus />
+        </IconButton>
+        {/* </button> */}
         &nbsp;
         ]
       </Fragment>
@@ -452,6 +500,7 @@ class QueryItem extends Component {
       localAppRegistry,
       field,
       onRemoveQueryItem,
+      darkMode,
       onChangeQueryItemValue,
       onAddQueryItem,
       onRenameQueryItem,
@@ -485,16 +534,28 @@ class QueryItem extends Component {
         <div
           className={styles['query-item-actions-container']}
         >
-          <button
+          {/* <button
             onClick={() => onRemoveQueryItem(field)}
+          > */}
+          <IconButton
+            onClick={() => onRemoveQueryItem(field)}
+            darkMode={!!darkMode}
+            aria-labelledby="Remove Item"
           >
-            x
-          </button>
-          <button
+            <X />
+          </IconButton>
+          {/* </button> */}
+          {/* <button
             onClick={() => onAddQueryItem()}
+          > */}
+          <IconButton
+            darkMode={!!darkMode}
+            onClick={() => onAddQueryItem()}
+            aria-labelledby="Add item"
           >
-            +
-          </button>
+            <Plus />
+          </IconButton>
+          {/* </button> */}
         </div>
         <div
           className={styles['query-item-container']}
@@ -507,6 +568,7 @@ class QueryItem extends Component {
           >
 
             <QueryField
+              darkMode={darkMode}
               value={field}
               schema={schema}
               schemaLoaded={schemaLoaded}
@@ -519,6 +581,11 @@ class QueryItem extends Component {
               store={store}
             />
             <span
+              style={{
+                verticalAlign: 'top',
+                display: 'inline-block',
+                paddingTop: 4
+              }}
             >
             :&nbsp;
             </span>
@@ -526,6 +593,7 @@ class QueryItem extends Component {
           {(
             <QueryValue
               // TODO: Path using path.
+              darkMode={darkMode}
               actions={actions}
               localAppRegistry={localAppRegistry}
               path={`${field}`}
@@ -550,6 +618,7 @@ class QueryItem extends Component {
                 {Object.entries(value).map(
                   ([nestedField, nestedValue], index) => (
                     <QueryItem
+                      darkMode={darkMode}
                       // key={`${field}-${index}`}
                       actions={actions}
                       localAppRegistry={localAppRegistry}
@@ -573,15 +642,21 @@ class QueryItem extends Component {
                   <div
                     // className={styles['query-object']}
                   >
-                    <button
-                      onClick={() => this.onAddQueryItem()}
+                    <IconButton
+                      darkMode={!!darkMode}
+                      onClick={() => onAddQueryItem()}
+                      aria-labelledby="Add item"
                     >
-                      +
-                    </button>
+                      <Plus />
+                    </IconButton>
                   </div>
                 )}
               </div>
-              &#125;
+              <span
+
+              >
+                &#125;
+              </span>
             </Fragment>
           )}
         </div>

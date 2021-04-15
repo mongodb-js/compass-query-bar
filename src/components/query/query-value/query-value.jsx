@@ -4,17 +4,29 @@ import PropTypes from 'prop-types';
 // import { QueryAutoCompleter } from 'mongodb-ace-autocompleter';
 // import FontAwesome from 'react-fontawesome';
 // import { EJSON } from 'bson';
-import { find, zip, min, max, filter } from 'lodash';
+import { isString, find, zip, min, max, filter } from 'lodash';
 // import detectCoordinates from 'detect-coordinates';
+import CaretDown from '@leafygreen-ui/icon/dist/CaretDown';
+import ChevronRight from '@leafygreen-ui/icon/dist/ChevronRight';
+import ChevronDown from '@leafygreen-ui/icon/dist/ChevronDown';
+import IconButton from '@leafygreen-ui/icon-button';
+// import Icon from '@leafygreen-ui/icon';
+// import TextArea from '@leafygreen-ui/text-area';
+import TextInput from '@leafygreen-ui/text-input';
+import Button, {
+  Size,
+  Variant
+} from '@leafygreen-ui/button';
+// import LeftGlyph from '@leafygreen-ui/icon/dist/Care';
+
+
+import styles from './query-value.less';
+
+import ValuePicker from '../value-picker/value-picker';
 
 // import 'brace/ext/language_tools';
 // import 'mongodb-ace-mode';
 // import 'mongodb-ace-theme-query';
-
-import styles from './query-value.less';
-import DateValue from './date-value/date-value';
-import Minichart from '../../schema/minichart';
-import { isString } from 'lodash';
 
 // const dateRegex = new RegExp('Date\(.*\)$');
 // function isDate(value) {
@@ -46,27 +58,6 @@ function _zipCoordinates(values) {
   // return false;
 }
 
-// const LOGICAL_QUERY_OPERATORS = {
-//   '$or': {
-//     id: '$or',
-//     title: '$or',
-//     description: 'Perform a logical OR operation on an array of two or more <expressions> and select the document(s) that satisfy at least one of the <expressions>'
-//   },
-//   '$and': {
-//     id: '$and',
-//     title: '$and',
-//     description: 'Performs a logical AND operation on an array of two or more <expressions> and select the document(s) that satisfy all of the <expressions>'
-//   },
-//   '$not': {
-//     id: '$not',
-//     title: '$not'
-//   },
-//   '$nor': {
-//     id: '$nor',
-//     title: '$nor'
-//   }
-// };
-
 const aaaaaa = false;
 
 function getSemanticType(type) {
@@ -75,7 +66,8 @@ function getSemanticType(type) {
     // const coords = detectCoordinates(type);
     // console.log('type', type);
     // console.log('is coords?', coords); coords ||
-    if ((type.name === 'Array' && (type.path === 'coordinates' || type.path === 'koordinaten'))) {
+    // TODO: Get rid of path check and look for geo json.
+    if ((type.name === 'Array' && (type.path === 'location' || type.path === 'coordinates' || type.path === 'koordinaten'))) {
       // console.log('new values', _zipCoordinates(type.types[0].values));
       return {
         ...type,
@@ -451,7 +443,8 @@ class QueryValue extends Component {
     localAppRegistry: PropTypes.object,
     // placeholder: PropTypes.string,
     // schemaFields: PropTypes.array
-    store: PropTypes.object
+    store: PropTypes.object,
+    darkMode: PropTypes.bool
   };
 
   static defaultProps = {
@@ -684,214 +677,81 @@ class QueryValue extends Component {
     );
   }
 
-  renderValuePicker() {
-    const {
-      isValuePickerExpanded
-    } = this.state;
+  // renderNestedValue(id) {
+  //   return (
+  //     <div
+  //       className={styles['nested-value-container']}
+  //       key={`nested-value-${id}`}
+  //     >
+  //       <QueryValue
+  //         // key={`nested-value-${id}`}
+  //       />
+  //     </div>
+  //   );
+  // }
 
-    const {
-      path,
-      fieldName,
-      value,
-      schemaLoaded,
-      onChangeQueryItemValue
-    } = this.props;
+  // renderArrayOfFields() {
+  //   const firstId = Math.floor(Math.random() * 1000);
+  //   const valuesToRender = [{
+  //     id: firstId
+  //   }, {
+  //     id: firstId + 1
+  //   }];
 
-    if (!fieldName || !schemaLoaded) {
-      return;
-    }
+  //   return (
+  //     <div
+  //       className={styles['nested-array-value-container']}
+  //     >
+  //       {valuesToRender.map(id => this.renderNestedValue(id))}
+  //     </div>
+  //   );
+  // }
 
+  // renderAdditionalFields() {
+  //   // const {
+  //   //   value
+  //   // } = this.props;
 
-    if (isBSONType(value) && getBSONTypeNameThingFromObj(value) === '$date') {
-      return (
-        <div
-          className={`${styles['value-picker']} ${isValuePickerExpanded ? styles['show-value-picker'] : ''}`}
-        >
-          <DateValue
-            queryValue={value.$date}
-            onChangeQueryValue={newQueryValue => {
-              onChangeQueryItemValue({
-                $date: newQueryValue
-              });
-            }}
-          />
-        </div>
-      );
-    }
+  //   // if (value === LOGICAL_QUERY_OPERATORS.$and.id
+  //   //   || value === LOGICAL_QUERY_OPERATORS.$or.id
+  //   //   || value === LOGICAL_QUERY_OPERATORS.$nor.id
+  //   // ) {
+  //   //   return this.renderArrayOfFields();
+  //   // }
 
-    const {
-      schema,
-      store
-    } = this.props;
-
-    const fields = schema.fields;
-    let type;
-    let types;
-    const pathDepth = this.props.path.split('.').length;
-    function getMatchingField(fieldNameToMatch, arrayOfFields) {
-      let match;
-      if (arrayOfFields) {
-        arrayOfFields.forEach(field => {
-          if (field.name === fieldNameToMatch) {
-            match = field;
-          } else if (field.title === fieldNameToMatch) {
-            match = field;
-          }
-        });
-      }
-
-      return match;
-    }
-
-    let doesntMatch = false;
-    this.props.path.split('.').map((interiorPath, index) => {
-      if (doesntMatch) {
-        return;
-      }
-
-      console.log('1', doesntMatch);
-      console.log('interiorPath', interiorPath);
-
-
-      if (index === pathDepth - 1) {
-        const matchingField = getMatchingField(interiorPath, fields);
-        if (!matchingField) {
-          doesntMatch = true;
-          return;
-        }
-
-
-        if (matchingField.types.length > 0) {
-          types = matchingField.types;
-          // type = matchingField.types;
-          const activeType = getSomeBsonKindOfType(value);
-          matchingField.types.forEach((matchingFieldType) => {
-            console.log('is matchingFieldType', matchingFieldType, activeType);
-            console.log('matching?', matchingFieldType.name, BSON_TYPES_INCOMPLETE[activeType]);
-            if (matchingFieldType.name === activeType || matchingFieldType.name === BSON_TYPES_INCOMPLETE[activeType].title) {
-              // type = ;
-              type = getSemanticType(matchingFieldType);
-            }
-          });
-          // console.log('getSemanticType', type);
-        }
-
-        if (!type) {
-          doesntMatch = true;
-        }
-
-        return;
-      }
-
-      if (!doesntMatch) {
-        const matchingField = getMatchingField(interiorPath, fields);
-        if (!matchingField) {
-          doesntMatch = true;
-          return;
-        }
-        // TODO: Nested fields.
-        // fields =
-      }
-    });
-
-    // if (doesntMatch) {
-    //   // console.log('no type suggestion found for', this.props.path);
-    //   return;
-    // }
-
-    return (
-      <div
-        className={`${styles['value-picker']} ${isValuePickerExpanded ? styles['show-value-picker'] : ''}`}
-      >
-        {doesntMatch && (
-          <div
-            className={styles['empty-value-picker']}
-          >
-            <em>
-              No suggestions found.
-            </em>
-          </div>
-        )}
-        {!doesntMatch && (
-          <div
-            className={styles['value-picker-chart']}
-          >
-            <Minichart
-              fieldName={this.props.path}
-              // TODO: Schema pass this type.
-              type={type} // {activeType}
-              nestedDocType={getNestedDocType(types)} // nestedDocType
-              actions={this.props.actions}
-              localAppRegistry={this.props.localAppRegistry}
-              store={store}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  renderNestedValue(id) {
-    return (
-      <div
-        className={styles['nested-value-container']}
-        key={`nested-value-${id}`}
-      >
-        <QueryValue
-          // key={`nested-value-${id}`}
-        />
-      </div>
-    );
-  }
-
-  renderArrayOfFields() {
-    const firstId = Math.floor(Math.random() * 1000);
-    const valuesToRender = [{
-      id: firstId
-    }, {
-      id: firstId + 1
-    }];
-
-    return (
-      <div
-        className={styles['nested-array-value-container']}
-      >
-        {valuesToRender.map(id => this.renderNestedValue(id))}
-      </div>
-    );
-  }
-
-  renderAdditionalFields() {
-    // const {
-    //   value
-    // } = this.props;
-
-    // if (value === LOGICAL_QUERY_OPERATORS.$and.id
-    //   || value === LOGICAL_QUERY_OPERATORS.$or.id
-    //   || value === LOGICAL_QUERY_OPERATORS.$nor.id
-    // ) {
-    //   return this.renderArrayOfFields();
-    // }
-
-    // if (value === COMPARISON_OPERATORS.$gt.id
-    //   || value === COMPARISON_OPERATORS.$lt.id
-    // ) {
-    //   return this.renderNestedValue(0);
-    // }
-  }
+  //   // if (value === COMPARISON_OPERATORS.$gt.id
+  //   //   || value === COMPARISON_OPERATORS.$lt.id
+  //   // ) {
+  //   //   return this.renderNestedValue(0);
+  //   // }
+  // }
 
   // eslint-disable-next-line complexity
   render() {
     const {
       expanded,
-      isTypePickerExpanded
+      isTypePickerExpanded,
+      isValuePickerExpanded
     } = this.state;
 
     const {
-      // bsonType,
+      actions,
+      path,
+      fieldName,
+      value,
+      darkMode,
+      schemaLoaded,
+      localAppRegistry,
       onChangeQueryItemValue,
-      value
+      schema,
+      store
     } = this.props;
+
+    // const {
+    //   // bsonType,
+    //   onChangeQueryItemValue,
+    //   value
+    // } = this.props;
 
     // const symbol = expanded ? 'caret-down' : 'caret-right';
 
@@ -916,16 +776,29 @@ class QueryValue extends Component {
         >
           <div
             className={styles['query-value-type']}
-            tabIndex={0}
-            onClick={() => { this.setState({ isTypePickerExpanded: !isTypePickerExpanded }); }}
+            // tabIndex={0}
+            // onClick={() => { this.setState({ isTypePickerExpanded: !isTypePickerExpanded }); }}
           >
-            {allTheFieldTypes[bsonTypeId].newTitle || allTheFieldTypes[bsonTypeId].title}
-            {/* {} */}
-            {/* {!isBSONValue && (
+            <Button
+              variant={Variant.Default}
+              darkMode={!!darkMode}
+              onClick={() => { this.setState({ isTypePickerExpanded: !isTypePickerExpanded }); }}
+              size={Size.Default}
+              disabled={false}
+              aria-labelledby="Type"
+              // leftGlyph={<Icon glyph="leftGlyph" />}
+              // rightGlyph={<Icon glyph="Caret Down" />}
+              rightGlyph={<CaretDown />}
+            >
+              {allTheFieldTypes[bsonTypeId].newTitle || allTheFieldTypes[bsonTypeId].title}
+              {/* {} */}
+              {/* {!isBSONValue && (
               isString(value)
                 ? 'String'
                 : 'Number'
             )} */}
+
+            </Button>
             {isTypePickerExpanded && this.renderTypePicker()}
           </div>
           {!(
@@ -936,7 +809,36 @@ class QueryValue extends Component {
               className={styles['query-value-input-area']}
               ref={this.valuePickerRef}
             >
-              <input
+              <TextInput
+                type="text"
+                className={styles['query-value-input']}
+                value={isBSONValue ? value[bsonTypeId] : value}
+                // onChange={e => {
+                //   onRenameQueryItem(value, e.target.value);
+                // }}
+                aria-labelledby={value}
+                darkMode={!!darkMode}
+                onFocus={() => {
+                  // console.log('on focus');
+                  this.setState({ isValuePickerExpanded: true });
+                }}
+                onChange={e => {
+                  if (isBSONValue) {
+                    onChangeQueryItemValue({
+                      [bsonTypeId]: e.target.value
+                    });
+                    return;
+                  }
+
+                  if (isString(value)) {
+                    onChangeQueryItemValue(e.target.value);
+                    return;
+                  }
+
+                  onChangeQueryItemValue(Number(e.target.value));
+                }}
+              />
+              {/* <input
                 type="text"
                 className={styles['query-value-input']}
                 value={isBSONValue ? value[bsonTypeId] : value}
@@ -970,29 +872,55 @@ class QueryValue extends Component {
 
                   onChangeQueryItemValue(Number(e.target.value));
                 }}
-              />
+              /> */}
 
-              {!expanded && !isTypePickerExpanded && this.renderValuePicker()}
+              {!expanded && !isTypePickerExpanded && isValuePickerExpanded && (
+                <div
+                  className={styles['query-value-picker-container']}
+                >
+                  <ValuePicker
+                    expanded={isValuePickerExpanded}
+                    actions={actions}
+                    path={path}
+                    expanded={expanded}
+                    fieldName={fieldName}
+                    value={value}
+                    schemaLoaded={schemaLoaded}
+                    localAppRegistry={localAppRegistry}
+                    onChangeQueryItemValue={onChangeQueryItemValue}
+                    schema={schema}
+                    store={store}
+                  />
+                </div>
+              )}
             </div>
           )}
 
           <div className={styles['query-field-options-area']}>
-            <button
+            {/* <button
               className={styles['query-field-dropdown-button']}
+            > */}
+            <IconButton
+              // className={}
+              darkMode={!!darkMode}
+              aria-labelledby={expanded ? 'Close Options' : 'Open Options'}
               onClick={() => { this.setState({ expanded: !expanded }); }}
-            // tabIndex="0"
-            // onBlur={() => { this.setState({ expanded: false }); } }
             >
-              {expanded ? 'V' : '>'}
-              {/* <FontAwesome fixedWidth name={symbol} /> */}
-            </button>
 
+              {expanded ? <ChevronDown /> : <ChevronRight />}
+
+            </IconButton>
             {expanded && this.renderExpanded()}
+
+            {/* {expanded ? 'V' : '>'} */}
+            {/* <FontAwesome fixedWidth name={symbol} /> */}
+            {/* </button> */}
+
           </div>
 
 
         </div>
-        {this.renderAdditionalFields()}
+        {/* {this.renderAdditionalFields()} */}
       </Fragment>
     );
   }

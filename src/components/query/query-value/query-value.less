@@ -2,6 +2,8 @@
 .query-value {
   display: inline-block;
   position: relative;
+  // min-width: 300px;
+  margin-left: 8px;
 }
 
 .query-value-input-area {
@@ -17,15 +19,25 @@
   //     top: 100%;
   //   }
   // }
+  
+  vertical-align: top;
 }
 
-// .query-value-input {
-  
-// }
+.query-value-input {
+  min-width: 300px;
+  margin: 0px 8px;
+}
 
 .query-field-options-area {
   display: inline-block;
   position: relative;
+  vertical-align: top;
+  margin-right: 10px;
+
+  button {
+    vertical-align: top;
+    // margin-right: 2px;
+  }
 }
 
 .query-value-options {
@@ -140,7 +152,7 @@
   display: inline-block;
   position: relative;
 
-  width: 74px;
+  min-width: 100px;
 
   &:hover {
     cursor: pointer;
@@ -148,49 +160,58 @@
   }
 }
 
-.value-picker {
-  // display: none;
-  display: block;
-  // visibility: hidden;
-  // pointer-events: none;
-  position: absolute;
-  z-index: 1000;
-  // top: 100%;
-  background-color: white;
-  border: 1px solid black;
-  // padding: 4px;
+// .value-picker {
+//   // display: none;
+//   display: block;
+//   // visibility: hidden;
+//   // pointer-events: none;
+//   position: absolute;
+//   z-index: 1000;
+//   // top: 100%;
+//   background-color: white;
+//   border: 1px solid black;
+//   // padding: 4px;
 
-  left: -10000px;
-  top: -10000px;
+//   left: -10000px;
+//   top: -10000px;
 
-  text-align: center;
+//   text-align: center;
 
-  &.show-value-picker {
-    left: 0;
-    top: 100%;
-  }
+//   &.show-value-picker {
+//     left: 0;
+//     top: 100%;
+//   }
 
-  .empty-value-picker {
-    padding: 10px;
-    min-width: 200px;
-  }
+//   .empty-value-picker {
+//     padding: 10px;
+//     min-width: 200px;
+//   }
 
-  .value-picker-chart {
-    width: 600px;
-    height: 400px;
-    position: relative;
-  }
+//   .value-picker-chart {
+//     width: 600px;
+//     height: 400px;
+//     position: relative;
+//   }
 
-  // &:hover, &:focus, &:active, &:focus-within {
-  //   // display: block;
-  //   // visibility: visible;
-  //   left: 0;
-  //   top: 100%;
-  //   // pointer-events: a;
-  // }
-}
+//   // &:hover, &:focus, &:active, &:focus-within {
+//   //   // display: block;
+//   //   // visibility: visible;
+//   //   left: 0;
+//   //   top: 100%;
+//   //   // pointer-events: a;
+//   // }
+// }
 
 // .value-picker .show-value-picker {
 //   left: 0;
 //   top: 100%;
 // }
+
+.query-value-picker-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10000;
+  // margin-right: 10px;
+  // padding: -20px;
+}

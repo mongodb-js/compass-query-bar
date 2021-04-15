@@ -115,6 +115,7 @@ class MiniChart extends Component {
       );
     }
     if (typeName === 'Coordinates') {
+      // 1.61803
       const height = width / 1.618; // = golden ratio
       return (
         <CoordinatesMinichart

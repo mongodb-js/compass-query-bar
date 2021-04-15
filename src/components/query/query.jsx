@@ -4,6 +4,12 @@ import { EJSON } from 'bson';
 import parseSchema from 'mongodb-schema';
 import util from 'util';
 import queryParser from 'mongodb-query-parser';
+import classnames from 'classnames';
+// import ChevronRight from '@leafygreen-ui/icon/dist/ChevronRight';
+// import ChevronDown from '@leafygreen-ui/icon/dist/ChevronDown';
+import IconButton from '@leafygreen-ui/icon-button';
+import Plus from '@leafygreen-ui/icon/dist/Plus';
+import Toggle from '@leafygreen-ui/toggle';
 
 import styles from './query.less';
 
@@ -68,6 +74,7 @@ class Query extends Component {
   static displayName = 'Query';
 
   static propTypes = {
+    darkMode: PropTypes.bool,
     // actions: PropTypes.object.isRequired,
     localAppRegistry: PropTypes.object.isRequired,
     // label: PropTypes.string.isRequired,
@@ -112,6 +119,7 @@ class Query extends Component {
     // } = this.props;
 
     this.state = {
+      darkMode: false,
       // query: parseQueryFromStore(value),
       schemaLoaded: false,
       schema: {}
@@ -333,6 +341,10 @@ class Query extends Component {
     // } = this.state;
 
     const {
+      darkMode
+    } = this.state;
+
+    const {
       schema,
       schemaLoaded
     } = this.state;
@@ -349,11 +361,14 @@ class Query extends Component {
 
     return (
       <div
-        className={styles.query}
+        className={classnames(styles.query, {
+          [styles['dark-mode']]: darkMode
+        })}
       >
         {Object.entries(query).map(
           ([field, fieldValue], index) => (
             <QueryItem
+              darkMode={darkMode}
               actions={actions}
               localAppRegistry={localAppRegistry}
               key={`${index}`}
@@ -375,13 +390,28 @@ class Query extends Component {
           )
         )}
         <div>
-          <button
+          {/* <button
             className={styles['query-add-another-item']}
             onClick={this.onAddQueryItem}
           >
             +
-          </button>
+          </button> */}
+          <IconButton
+            darkMode={!!darkMode}
+            className={styles['query-add-another-item']}
+            onClick={this.onAddQueryItem}
+            aria-labelledby="Add item"
+          >
+            <Plus />
+          </IconButton>
         </div>
+        <Toggle
+          className={styles['dark-mode-toggle']}
+          darkMode={!!darkMode}
+          // className={styles['query-add-another-item']}
+          onClick={() => { this.setState({ darkMode: !darkMode }); } }
+          aria-labelledby="Toggle Dark Mode"
+        />
       </div>
     );
   }

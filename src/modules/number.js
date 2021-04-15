@@ -100,7 +100,7 @@ const minicharts_d3fns_number = (appRegistry) => {
       // append g element if it doesn't exist yet
       g.enter()
         .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        .attr('transform', 'translate(' + margin.left * 2 + ',' + margin.top + ')');
 
       let labels;
       if (options.unique < 20) {

@@ -6,6 +6,8 @@ import d3 from 'd3';
 import bson from 'bson';
 import { assign } from 'lodash';
 
+import styles from './d3-component.less';
+
 /**
  * Convert back to BSON types from the raw JS.
  */
@@ -61,7 +63,7 @@ class D3Component extends Component {
 
   _getContainer() {
     let options = {
-      className: 'minichart',
+      className: styles.minichart,
       ref: 'container'
     };
     const sizeOptions = {
@@ -125,7 +127,7 @@ class D3Component extends Component {
   render() {
     const container = this._getContainer();
     return (
-      <div className="minichart-wrapper" ref="wrapper">
+      <div className={styles['minichart-wrapper']} ref="wrapper">
         {container}
       </div>
     );

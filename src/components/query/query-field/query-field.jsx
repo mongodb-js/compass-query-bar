@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // import Autocomplete from 'react-autocomplete';
+import ChevronRight from '@leafygreen-ui/icon/dist/ChevronRight';
+import ChevronDown from '@leafygreen-ui/icon/dist/ChevronDown';
+import IconButton from '@leafygreen-ui/icon-button';
+import TextInput from '@leafygreen-ui/text-input';
 
 import styles from './query-field.less';
 
@@ -129,6 +133,7 @@ class QueryField extends Component {
   static displayName = 'QueryField';
 
   static propTypes = {
+    darkMode: PropTypes.bool,
     onRenameQueryItem: PropTypes.func.isRequired,
     renameAndUpdateValue: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
@@ -354,9 +359,9 @@ class QueryField extends Component {
       }
     });
 
-    console.log('fields', fields);
-    console.log('autocompleteOptions', autocompleteOptions);
-    console.log('path', path);
+    // console.log('fields', fields);
+    // console.log('autocompleteOptions', autocompleteOptions);
+    // console.log('path', path);
 
     if (!autocompleteOptions || autocompleteOptions.length === 0) {
       return;
@@ -400,6 +405,7 @@ class QueryField extends Component {
     } = this.state;
 
     const {
+      darkMode,
       onRenameQueryItem,
       // schemaFields,
       value
@@ -416,24 +422,46 @@ class QueryField extends Component {
       >
 
         <div className={styles['query-field-input-area']}>
-          <input
+          <TextInput
             type="text"
             className={styles['query-field-input']}
             value={value}
             onChange={e => {
               onRenameQueryItem(value, e.target.value);
             }}
+            aria-labelledby={value}
+            darkMode={!!darkMode}
           />
-          {expanded && this.renderExpanded()}
+          {/* <input
+            type="text"
+            className={styles['query-field-input']}
+            value={value}
+            onChange={e => {
+              onRenameQueryItem(value, e.target.value);
+            }}
+          /> */}
+
           {!expanded && this.renderAutoComplete()}
         </div>
-        <button
+        {/* <button
           className={styles['query-field-dropdown-button']}
           onClick={() => { this.setState({ expanded: !expanded }); }}
         >
           {expanded ? 'V' : '>'}
-          {/* <FontAwesome fixedWidth name={symbol} /> */}
-        </button>
+        </button> */}
+        <div
+          className={styles['query-field-action-area']}
+        >
+          <IconButton
+            darkMode={!!darkMode}
+            aria-labelledby={expanded ? 'Close Options' : 'Open Options'}
+            onClick={() => { this.setState({ expanded: !expanded }); }}
+          >
+
+            {expanded ? <ChevronDown /> : <ChevronRight />}
+          </IconButton>
+          {expanded && this.renderExpanded()}
+        </div>
       </div>
     );
   }
