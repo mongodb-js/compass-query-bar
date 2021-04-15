@@ -13,7 +13,9 @@ import QueryValue, {
   BSON_THINGS
 } from '../query-value/query-value';
 import QueryField from '../query-field/query-field';
-import ValuePicker from '../value-picker/value-picker';
+import ValuePicker, {
+  getSomeBsonKindOfType
+} from '../value-picker/value-picker';
 
 // import 'brace/ext/language_tools';
 // import 'mongodb-ace-mode';
@@ -385,7 +387,9 @@ class QueryItem extends Component {
           || path.split('.').slice(-1)[0] === 'koordinaten'
           || path.split('.').slice(-1)[0] === 'coordinates'
         ) && (
-          <div>
+          <div
+            className={styles['query-array-coord-container']}
+          >
             <ValuePicker
               darkMode={darkMode}
               expanded
@@ -412,6 +416,7 @@ class QueryItem extends Component {
           {(
             <QueryValue
               // TODO: Path using path.
+              key={`${getSomeBsonKindOfType(value)}`}
               actions={actions}
               localAppRegistry={localAppRegistry}
               path={`${field}.${arrayIndex}`}
@@ -592,6 +597,7 @@ class QueryItem extends Component {
           </div>
           {(
             <QueryValue
+              key={`${getSomeBsonKindOfType(value)}`}
               // TODO: Path using path.
               darkMode={darkMode}
               actions={actions}

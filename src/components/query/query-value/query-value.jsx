@@ -765,6 +765,8 @@ class QueryValue extends Component {
     // console.log('isBSONValue', isBSONValue);
     const bsonTypeId = getSomeBsonKindOfType(value);
 
+    // console.log('isValuePickerExpanded', isValuePickerExpanded);
+
     // console.log('value', value);
     // console.log('bsonTypeId', bsonTypeId);
     // console.log('value[bsonTypeId]', value[bsonTypeId]);
@@ -812,16 +814,19 @@ class QueryValue extends Component {
               <TextInput
                 type="text"
                 className={styles['query-value-input']}
-                value={isBSONValue ? value[bsonTypeId] : value}
+                value={isBSONValue ? `${value[bsonTypeId]}` : `${value}`}
                 // onChange={e => {
                 //   onRenameQueryItem(value, e.target.value);
                 // }}
-                aria-labelledby={value}
+                aria-labelledby="Value"
                 darkMode={!!darkMode}
                 onFocus={() => {
-                  // console.log('on focus');
+                  console.log('on focus');
                   this.setState({ isValuePickerExpanded: true });
                 }}
+                // onClick={() => {
+                //   this.setState({ isValuePickerExpanded: true });
+                // }}
                 onChange={e => {
                   if (isBSONValue) {
                     onChangeQueryItemValue({
@@ -879,10 +884,11 @@ class QueryValue extends Component {
                   className={styles['query-value-picker-container']}
                 >
                   <ValuePicker
-                    expanded={isValuePickerExpanded}
+                    // expanded={isValuePickerExpanded}
+                    expanded
                     actions={actions}
                     path={path}
-                    expanded={expanded}
+                    // expanded={expanded}
                     fieldName={fieldName}
                     value={value}
                     schemaLoaded={schemaLoaded}

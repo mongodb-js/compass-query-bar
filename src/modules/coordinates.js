@@ -186,7 +186,9 @@ const minicharts_d3fns_geo = (localAppRegistry) => {
           map.dragPan.disable();
         })
         .on('mouseup', function() {
-          map.dragPan.enable();
+          if (map && map.dragPan && map.dragPan.enable) {
+            map.dragPan.enable();
+          }
         });
 
       dispatch.update();

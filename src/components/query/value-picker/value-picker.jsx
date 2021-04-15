@@ -324,7 +324,7 @@ function getNestedDocType(types) {
   return null;
 }
 
-function getSomeBsonKindOfType(value) {
+export function getSomeBsonKindOfType(value) {
   let bsonTypeId;
   if (isBSONType(value)) {
     bsonTypeId = BSON_TYPES_INCOMPLETE[Object.keys(value)[0]].id;
@@ -400,11 +400,13 @@ class ValuePicker extends Component {
     }
 
     // console.log('render?');
+    console.log('expanded', expanded);
+    console.log('path', path);
 
     if (isBSONType(value) && getBSONTypeNameThingFromObj(value) === allTheFieldTypes.$date.id) {
       return (
         <div
-          className={`${styles['value-picker']} ${expanded ? styles['show-value-picker'] : ''}`}
+          className={`${styles['value-picker']} ${!expanded ? styles['show-value-picker'] : ''}`}
         >
           <DateValue
             queryValue={value.$date}

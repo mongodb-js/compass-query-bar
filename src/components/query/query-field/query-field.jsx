@@ -429,7 +429,7 @@ class QueryField extends Component {
             onChange={e => {
               onRenameQueryItem(value, e.target.value);
             }}
-            aria-labelledby={value}
+            aria-labelledby="Field Name"
             darkMode={!!darkMode}
           />
           {/* <input

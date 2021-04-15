@@ -1,4 +1,10 @@
 
+.value-picker .show-value-picker {
+  left: 0;
+  top: 100%;
+}
+
+
 .value-picker {
   // display: none;
   display: block;
@@ -11,15 +17,16 @@
   border: 1px solid black;
   // padding: 4px;
 
-  // left: -10000px;
-  // top: -10000px;
+  position: absolute;
+  left: -10000px;
+  top: -10000px;
 
   text-align: center;
 
-  // &.show-value-picker {
-  // left: 0;
-  // top: 100%;
-  // }
+  &.show-value-picker {
+    left: 0;
+    top: 100%;
+  }
 
   padding: 10px;
   overflow: visible;
@@ -32,7 +39,7 @@
   .value-picker-chart {
     // width: 640px;
     // height: 390px;
-    
+
     width: 600px;
     height: 371px;
     

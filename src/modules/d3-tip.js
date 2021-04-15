@@ -278,12 +278,18 @@
     }
 
     function getSVGNode(el) {
+      if (!el) {
+        return;
+      }
       el = el.node();
       if (!el) {
         return;
       }
       if (el.tagName.toLowerCase() === 'svg') {
         return el;
+      }
+      if (!el) {
+        return;
       }
 
       return el.ownerSVGElement;
