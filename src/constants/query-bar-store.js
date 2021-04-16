@@ -7,7 +7,7 @@ const APPLY_STATE = 'apply';
 
 const DEFAULT_FILTER = {};
 // const DEFAULT_FILTER = '{_id: ObjectId(\'58c33a794d08b991e3648fd2\')}';
-const DEFAULT_FILTER_STRING = '{_id: ObjectId(\'58c33a794d08b991e3648fd2\')}';
+const DEFAULT_FILTER_STRING = '';// '{_id: ObjectId(\'58c33a794d08b991e3648fd2\')}';
 const DEFAULT_PROJECT = null;
 const DEFAULT_SORT = null;
 const DEFAULT_COLLATION = null;

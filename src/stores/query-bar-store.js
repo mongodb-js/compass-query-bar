@@ -83,7 +83,7 @@ const configureStore = (options = {}) => {
     },
 
     setDataProvider(provider) {
-      console.log('setDataProvidersetDataProvider');
+      // console.log('setDataProvidersetDataProvider');
       this.setState({
         dataService: provider
       });

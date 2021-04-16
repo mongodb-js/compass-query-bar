@@ -189,9 +189,7 @@ export const BSON_TYPES_INCOMPLETE = {
   '$date': {
     id: '$date',
     title: 'Date',
-    defaultValue: {
-      '$date': new Date()
-    }
+    defaultValue: new Date()
   },
   '$numberDouble': {
     id: '$numberDouble',

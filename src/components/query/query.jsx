@@ -232,10 +232,10 @@ class Query extends Component {
     let newCode = '';
     try {
       // console.log('serialized:', EJSON.serialize(queryObj));
-      newCode = EJSON.stringify(queryObj);
+      // newCode = EJSON.stringify(queryObj);
       // console.log('after stringing', newCode);
-      // newCode = queryParser.stringify(queryObj);
-      // console.log('stringified ejson')
+      newCode = queryParser.stringify(queryObj);
+      console.log('stringified save', newCode);
       // newCode = JSON.stringify(queryObj);
     } catch (e) {
       console.log('unable to parse query as json:', e);

@@ -628,16 +628,32 @@ class QueryItem extends Component {
                   className={styles['query-array-coord-container']}
                 >
                   <ValuePicker
-                    darkMode={darkMode}
+                    // darkMode={darkMode}
+                    // expanded
+                    // actions={actions}
+                    // path={path}
+                    // fieldName={path.split('.').slice(-1)[0]}
+                    // value={value}
+                    // schemaLoaded={schemaLoaded}
+                    // localAppRegistry={localAppRegistry}
+                    // onChangeQueryItemValue={onChangeQueryItemValue}
+                    // schema={schema}
+                    // store={store}
+
+                    // key={`${getSomeBsonKindOfType(value)}`}
                     expanded
+                    // TODO: Path using path.
+                    darkMode={darkMode}
                     actions={actions}
-                    path={path}
-                    fieldName={path.split('.').slice(-1)[0]}
-                    value={value}
-                    schemaLoaded={schemaLoaded}
                     localAppRegistry={localAppRegistry}
-                    onChangeQueryItemValue={onChangeQueryItemValue}
+                    path={`${field}`}
+                    onChangeQueryItemValue={(newValue) => onChangeQueryItemValue(field, newValue)}
+                    value={value}
+                    // originalValue={originalValue}
+                    // schemaFields={schemaFields}
                     schema={schema}
+                    fieldName={field}
+                    schemaLoaded={schemaLoaded}
                     store={store}
                   />
                 </div>

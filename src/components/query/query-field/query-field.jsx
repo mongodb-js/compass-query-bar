@@ -331,6 +331,8 @@ class QueryField extends Component {
               && schemaField.name !== value
             )
           ));
+
+          // if (!autocompleteOptions && )
         }
 
         return;
@@ -352,10 +354,19 @@ class QueryField extends Component {
         }
 
         const matchingField = getMatchingField(interiorPath, fields);
+
         if (!matchingField) {
           doesntMatch = true;
           return;
         }
+
+        // fields = fields.filter(schemaField => (
+        //   !value
+        //   || (
+        //     schemaField.name.toLowerCase().includes(value.toLowerCase())
+        //     && schemaField.name !== value
+        //   )
+        // ));
       }
     });
 

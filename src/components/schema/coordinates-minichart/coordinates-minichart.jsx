@@ -249,7 +249,8 @@ class CoordinatesMinichart extends PureComponent {
         viewport={{ center: [0, 0], zoom: 1 }}
         whenReady={this.whenMapReady}
         ref="map"
-        onMoveend={this.onMoveEnd}>
+        onMoveend={this.onMoveEnd}
+      >
         {this.renderMapItems()}
         <TileLayer url={DEFAULT_TILE_URL} attribution={attributionMessage} />
         <FeatureGroup>
