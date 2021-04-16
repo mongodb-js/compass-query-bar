@@ -321,6 +321,37 @@
       let targetel = target;
       if (!targetel) targetel = d3.event.target;
 
+      if (!targetel) {
+        // point.x = x;
+        // point.y = y;
+        // bbox. = point.matrixTransform(matrix);
+        // point.x += width;
+        // bbox. = point.matrixTransform(matrix);
+        // point.y += height;
+        // bbox. = point.matrixTransform(matrix);
+        // point.x -= width;
+        // bbox. = point.matrixTransform(matrix);
+        // point.y -= height / 2;
+        // bbox.= point.matrixTransform(matrix);
+        // point.x += width;
+        // bbox.= point.matrixTransform(matrix);
+        // point.x -= width / 2;
+        // point.y -= height / 2;
+        // bbox.= point.matrixTransform(matrix);
+        // point.y += height;
+        // bbox.= point.matrixTransform(matrix);
+        return {
+          nw: 0,
+          ne: 0,
+          se: 0,
+          sw: 0,
+          w: 0,
+          e: 0,
+          n: 0,
+          s: 0,
+        };
+      }
+
       while ('undefined' === typeof targetel.getScreenCTM && 'undefined' !== targetel.parentNode) {
         targetel = targetel.parentNode;
       }

@@ -414,16 +414,7 @@ class ValuePicker extends Component {
         >
           <DateValue
             queryValue={value.$date}
-            onChangeQueryValue={newQueryValue => {
-              // onChangeQueryItemValue(newQueryValue);
-              // onChangeQueryItemValue(Date(newQueryValue));
-              onChangeQueryItemValue({
-                $date: `${new Date(newQueryValue)}`
-              });
-              // onChangeQueryItemValue({
-              //   $date: newQueryValue // new Date(newQueryValue)
-              // });
-            }}
+            onChangeQueryValue={onChangeQueryItemValue}
           />
         </div>
       );

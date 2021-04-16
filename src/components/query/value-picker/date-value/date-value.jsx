@@ -26,9 +26,30 @@ class DateValue extends Component {
   };
 
   onDateValueChange = (momentDateObject) => {
-    console.log('formatted date change', momentDateObject.toDate());// .format());
+    // console.log('format')
+    // const formattedDate = momentDateObject.toDate();
+    // console.log('formatted date change', formattedDate);// .format());
+    // console.log('set new date value', {
+    //   $date: `${new Date(formattedDate)}`
+    // });
+    // console.log('would it be better as 1',
+    //   momentDateObject.format()
+    // );
+    // console.log('would it be better as 2', {
+    //   $date: `${momentDateObject.format()}`
+    // });
+    // console.log('would it be better as 3', {
+    //   $date: `${new Date(momentDateObject.format())}`
+    // });
+    // console.log('would it be better as 4', {
+    //   $date: new Date(momentDateObject.format())
+    // });
 
-    this.props.onChangeQueryValue(momentDateObject.toDate());// .format());
+    this.props.onChangeQueryValue(
+      new Date(momentDateObject.format())
+    );
+
+    // this.props.onChangeQueryValue(momentDateObject.toDate());// .format());
   }
 
   // renderInput( props, openCalendar, closeCalendar ) {
@@ -54,7 +75,7 @@ class DateValue extends Component {
 
     let datetimeValue;
     try {
-      datetimeValue = new Date(queryValue);
+      datetimeValue = new Date(`${queryValue}`);
     } catch (e) {
       console.log('get date failed for string', queryValue);
       return null;
