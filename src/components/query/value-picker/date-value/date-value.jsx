@@ -26,9 +26,9 @@ class DateValue extends Component {
   };
 
   onDateValueChange = (momentDateObject) => {
-    console.log('formatted date change', momentDateObject.format());
+    console.log('formatted date change', momentDateObject.toDate());// .format());
 
-    this.props.onChangeQueryValue(momentDateObject.format());
+    this.props.onChangeQueryValue(momentDateObject.toDate());// .format());
   }
 
   // renderInput( props, openCalendar, closeCalendar ) {

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { isString, find, zip, min, max, filter } from 'lodash';
+// import {
+//   Date
+// } from 'bson';
 
 // import styles from './query-value.less';
 import DateValue from './date-value/date-value';
@@ -400,9 +403,9 @@ class ValuePicker extends Component {
     }
 
     // console.log('render?');
-    console.log('expanded', expanded);
-    console.log('path', path);
-    console.log('value picker for type', getBSONTypeNameThingFromObj(value));
+    // console.log('expanded', expanded);
+    // console.log('path', path);
+    // console.log('value picker for type', getBSONTypeNameThingFromObj(value));
 
     if (isBSONType(value) && getBSONTypeNameThingFromObj(value) === allTheFieldTypes.$date.id) {
       return (
@@ -412,9 +415,14 @@ class ValuePicker extends Component {
           <DateValue
             queryValue={value.$date}
             onChangeQueryValue={newQueryValue => {
+              // onChangeQueryItemValue(newQueryValue);
+              // onChangeQueryItemValue(Date(newQueryValue));
               onChangeQueryItemValue({
-                $date: newQueryValue
+                $date: `${new Date(newQueryValue)}`
               });
+              // onChangeQueryItemValue({
+              //   $date: newQueryValue // new Date(newQueryValue)
+              // });
             }}
           />
         </div>
@@ -422,6 +430,8 @@ class ValuePicker extends Component {
     }
 
     const fields = schema.fields;
+    console.log('match fields w ', fields);
+    console.log('match with', path);
     let type;
     let types;
     const pathDepth = path.split('.').length;
@@ -433,9 +443,14 @@ class ValuePicker extends Component {
             match = field;
           } else if (field.title === fieldNameToMatch) {
             match = field;
+          } else if (field.path === fieldNameToMatch) {
+            match = field;
           }
         });
       }
+
+      console.log('try match', fieldNameToMatch, arrayOfFields);
+      console.log('was there match', match);
 
       return match;
     }
@@ -452,6 +467,7 @@ class ValuePicker extends Component {
 
       if (index === pathDepth - 1) {
         const matchingField = getMatchingField(interiorPath, fields);
+        console.log('got matchingField', matchingField);
         if (!matchingField) {
           doesntMatch = true;
           return;
@@ -465,13 +481,20 @@ class ValuePicker extends Component {
           matchingField.types.forEach((matchingFieldType) => {
             // console.log('is matchingFieldType', matchingFieldType, activeType);
             // console.log('matching?', matchingFieldType.name, BSON_TYPES_INCOMPLETE[activeType]);
+            // console.log('activeType', getSemanticType(activeType), matchingFieldType);
             if (matchingFieldType.name === activeType
               || (
                 BSON_TYPES_INCOMPLETE[activeType]
                 && matchingFieldType.name === BSON_TYPES_INCOMPLETE[activeType].title
               )
+              || (
+                path.split('.').slice(-1)[0] === 'location'
+                || path.split('.').slice(-1)[0] === 'koordinaten'
+                || path.split('.').slice(-1)[0] === 'coordinates'
+              )
             ) {
               // type = ;
+              // console.log('did match', matchingField);
               type = getSemanticType(matchingFieldType);
             }
           });
@@ -497,7 +520,7 @@ class ValuePicker extends Component {
     });
 
     if (doesntMatch) {
-      // console.log('no type suggestion found for', path);
+      console.log('no type suggestion found for', path);
       return null;
     }
     // console.log('do render aaaaaaaaa', path);

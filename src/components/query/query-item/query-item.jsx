@@ -386,7 +386,7 @@ class QueryItem extends Component {
           path.split('.').slice(-1)[0] === 'location'
           || path.split('.').slice(-1)[0] === 'koordinaten'
           || path.split('.').slice(-1)[0] === 'coordinates'
-        ) && (
+        ) && path.split('.').length < 1 && (
           <div
             className={styles['query-array-coord-container']}
           >
@@ -394,8 +394,8 @@ class QueryItem extends Component {
               darkMode={darkMode}
               expanded
               actions={actions}
-              path={path}
-              fieldName={'aaaaaaaaaaa'}
+              path={path.split('.').slice(-1)[0]}
+              fieldName={path.split('.').slice(-1)[0]}
               value={value}
               schemaLoaded={schemaLoaded}
               localAppRegistry={localAppRegistry}
@@ -646,6 +646,7 @@ class QueryItem extends Component {
               <div
                 className={styles['query-object']}
               >
+
                 {Object.entries(value).map(
                   ([nestedField, nestedValue], index) => (
                     <QueryItem
@@ -683,11 +684,11 @@ class QueryItem extends Component {
                   </div>
                 )}
               </div>
-              <span
-
+              <div
+                className={styles['query-item-object-ender']}
               >
                 &#125;
-              </span>
+              </div>
             </Fragment>
           )}
         </div>

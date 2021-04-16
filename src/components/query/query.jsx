@@ -190,7 +190,7 @@ class Query extends Component {
 
     const runFind = util.promisify(dataService.find.bind(dataService));
     try {
-      const documents = await runFind(ns, {}, {});
+      const documents = await runFind(ns, {}, {limit: 20});
 
       const runParseSchema = util.promisify(parseSchema);
       const schema = await runParseSchema(documents);

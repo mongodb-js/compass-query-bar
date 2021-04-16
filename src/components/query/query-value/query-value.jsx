@@ -108,7 +108,7 @@ const GEOSPATIAL_OPERATORS = {
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: [123, 123]
+          coordinates: [20, 20]
         },
         $maxDistance: 100,
         $minDistance: 0
